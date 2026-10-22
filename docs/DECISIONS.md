@@ -86,3 +86,35 @@ branch; PRs into `Main` are opened on request. CI runs on every PR and on pushes
 `node_modules` (exact versions pinned via `expo install --offline` from SDK 58's
 `bundledNativeModules.json`), and every change is validated by typecheck, Jest and a full Metro
 export for Android and iOS (`npx expo export`).
+
+## ADR-010: VisionCamera 5 (Nitro) with react-native-worklets frame processors
+
+**Context.** VisionCamera 5 is a Nitro-module rewrite; frame processors are provided by the
+separate `react-native-vision-camera-worklets` package on top of `react-native-worklets` — the same
+worklets runtime Reanimated 4 uses (v4's `react-native-worklets-core` is no longer involved).
+`vision-camera-resize-plugin` only supports v4.
+
+**Decision.** VisionCamera 5.2.3 + vision-camera-worklets 5.2.3 + nitro-modules 0.37 / nitro-image
+0.15. Frame output: `pixelFormat: 'rgb'`, VGA 4:3 preview-sized buffers, physical buffer rotation
+on (upright frames, simplest correct mapping), `dropFramesWhileBusy`. Pose results go to Reanimated
+shared values, which are writable from worker runtimes in Reanimated 4.7 (verified in source).
+
+## ADR-011: BlazePose (MediaPipe) as default pose model; MoveNet optional
+
+See `docs/POSE_MODELS.md`. MoveNet files could not be obtained in this build (Kaggle/TF Hub
+interactive download); BlazePose bundles are public, provide heels/feet and visibility, and track
+via rotated ROIs. Both implement `PoseEstimator`; MoveNet is enabled with `npm run models:fetch`.
+Bundled weight 12.2 MB (< 15 MB budget, tested).
+
+## ADR-012: ROI crop/normalization runs as a TFLite graph, not JavaScript
+
+**Context.** Measured in the Hermes VM: rotated 256² crop in JS ≈ 22 ms/frame (no JIT in worklet
+runtimes). **Decision.** An 8 KB builtin-ops TFLite graph per input size does the gather/normalize
+natively (≈2.4 ms on the same CPU), driven by 15 affine params from JS. Verified bit-identical to
+the reference; JS sampler kept as fallback.
+
+## ADR-013: CoreML on iOS, OpenCL GPU on Android, CPU fallback
+
+fast-tflite 3.0.1's Metal delegate throws "not yet supported", so iOS uses CoreML (config plugin
+flag). Android uses the GPU delegate (OpenCL libs declared via the plugin). `loadModelWithFallback`
+retries on CPU if a delegate fails to initialise.

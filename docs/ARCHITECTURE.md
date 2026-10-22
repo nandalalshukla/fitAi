@@ -6,7 +6,8 @@ no camera frames ever leave the phone.
 ```mermaid
 flowchart LR
   subgraph Device
-    CAM[VisionCamera frames] --> POSE[PoseEstimator<br/>TFLite MoveNet]
+    CAM[VisionCamera frames] --> PRE[ROI preprocessing<br/>TFLite graph]
+    PRE --> POSE[PoseEstimator<br/>TFLite BlazePose / MoveNet]
     POSE --> SMOOTH[One-Euro smoothing]
     SMOOTH --> GEO[Geometry: angles,<br/>orientation, normalization]
     GEO --> ENGINE[Exercise engine<br/>rep state machine + form rules]
@@ -53,5 +54,15 @@ Public config is parsed and validated with zod in `src/core/env.ts`; build-time 
 /(tabs)        Today · Plans · Exercises · Progress · Settings   (custom animated tab bar)
 /plan/[id]     Plan detail (slide)
 /workout       Workout player (full-screen modal, fade, no swipe dismiss)
-/dev/*         Dev-only tools (design-system gallery, later: animation preview, debug overlay)
+/dev/*         Dev-only tools (design-system gallery, pose lab + benchmark)
 ```
+
+## Threads
+
+| Thread                 | Work                                                                    |
+| ---------------------- | ----------------------------------------------------------------------- |
+| JS                     | React, navigation, model loading (`init()`), persistence                |
+| Camera worklet runtime | frame → preprocessing graph → pose model → decode → `pose` shared value |
+| UI (Reanimated)        | Skia skeleton paths, animations                                         |
+
+Nothing per-frame touches React state; the debug HUD samples stats at ~2 Hz.

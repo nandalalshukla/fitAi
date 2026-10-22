@@ -3,14 +3,16 @@
 AI fitness coach for Android and iOS. Pick a plan, tap **Start today's workout**, and the phone
 camera counts your reps, checks your form in real time and coaches you by voice — 100 % on-device.
 
-> Status: **Phase 1 (Foundation)** complete — tooling, CI, design system, navigation shell.
+> Status: **Phase 2 (Pose spike)** complete — on-device BlazePose via VisionCamera 5 + TFLite,
+> Skia skeleton, Pose lab benchmark. Device FPS numbers pending (see `docs/POSE_SPIKE.md`).
 > See the phase plan in `claude-code-fitness-app-prompt.md` §7.2.
 
 ## Stack
 
 Expo SDK 58 (React Native 0.88, New Architecture, dev builds) · TypeScript strict · Expo Router ·
-Reanimated 4 + Gesture Handler · Zustand · i18next · zod · Jest + React Native Testing Library ·
-ESLint + Prettier + Husky + commitlint. Upcoming: VisionCamera + TFLite MoveNet, Skia, expo-speech,
+Reanimated 4 + Gesture Handler · VisionCamera 5 + react-native-fast-tflite (BlazePose) · Skia ·
+Zustand · i18next · zod · Jest + React Native Testing Library · ESLint + Prettier + Husky +
+commitlint. Upcoming: expo-speech,
 expo-sqlite + MMKV, Supabase, Sentry. Rationale in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
 ## Getting started
