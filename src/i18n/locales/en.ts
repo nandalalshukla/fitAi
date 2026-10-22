@@ -61,6 +61,27 @@ export const en = {
     appearanceDark: 'Dark',
     appearanceLight: 'Light',
     designSystem: 'Design system (dev)',
+    poseLab: 'Pose lab (dev)',
+  },
+  camera: {
+    permissionTitle: 'Let FormFit see your moves',
+    permissionMessage:
+      'The camera counts your reps and checks your form. Video is processed on your phone and never stored or uploaded.',
+    allow: 'Allow camera',
+    deniedTitle: 'Camera access is off',
+    deniedMessage:
+      'Turn on camera access in Settings to use the AI coach. You can still log workouts manually.',
+    openSettings: 'Open Settings',
+    modelErrorTitle: "The AI coach couldn't start",
+    flip: 'Flip camera',
+    skeleton: 'Skeleton',
+  },
+  poseLab: {
+    title: 'Pose lab (dev)',
+    model: 'Model',
+    benchmark: 'Run 30 s benchmark',
+    benchmarking: 'Benchmarking… {{seconds}} s',
+    results: 'Benchmark results',
   },
   workout: {
     title: 'Workout',

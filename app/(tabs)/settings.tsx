@@ -46,6 +46,11 @@ export default function SettingsScreen() {
             title={t('settings.designSystem')}
             onPress={() => router.push('/dev/design-system')}
           />
+          <ListItem
+            icon="body-outline"
+            title={t('settings.poseLab')}
+            onPress={() => router.push('/dev/pose-lab')}
+          />
         </Card>
       ) : null}
     </Screen>
