@@ -1,0 +1,6 @@
+# Python tooling for pose models (not shipped in the app). Python 3.11+.
+ai-edge-litert
+numpy
+scikit-image
+pillow
+tensorflow-cpu  # only needed to rebuild roi_preprocess_*.tflite
