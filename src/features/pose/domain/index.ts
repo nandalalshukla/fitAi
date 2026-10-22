@@ -11,3 +11,6 @@ export * from './types';
 export * from './viewTransform';
 export * from './benchmark';
 export * from './preprocess';
+export * from './geometry';
+export * from './skeleton';
+export * from './smoothing';
