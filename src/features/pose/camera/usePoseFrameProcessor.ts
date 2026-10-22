@@ -132,7 +132,9 @@ export function usePoseFrameProcessor({
         const result = estimate({
           pixels: new Uint8Array(frame.getPixelBuffer()),
           desc,
-          timestamp: frame.timestamp,
+          // Monotonic ms clock: Frame.timestamp's unit differs by platform; smoothing and
+          // the rep engine need milliseconds.
+          timestamp: now,
         });
         const end = nowMs();
         onInference(perf, end, end - now, budgetMs);
