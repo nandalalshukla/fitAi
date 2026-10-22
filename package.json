@@ -1,0 +1,93 @@
+{
+  "name": "formfit",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "dependencies": {
+    "@expo-google-fonts/barlow-condensed": "^0.4.1",
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo/vector-icons": "^15.0.2",
+    "expo": "~58.0.17",
+    "expo-asset": "~58.0.18",
+    "expo-blur": "~58.0.5",
+    "expo-constants": "~58.0.13",
+    "expo-font": "~58.0.9",
+    "expo-haptics": "~58.0.7",
+    "expo-linear-gradient": "~58.0.3",
+    "expo-linking": "~58.0.14",
+    "expo-localization": "~58.0.5",
+    "expo-router": "~58.0.25",
+    "expo-splash-screen": "~58.0.11",
+    "expo-status-bar": "~58.0.4",
+    "expo-system-ui": "~58.0.6",
+    "i18next": "^26.5.5",
+    "lottie-react-native": "~7.5.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-i18next": "^17.1.1",
+    "react-native": "0.88.0",
+    "react-native-gesture-handler": "~3.3.0",
+    "react-native-reanimated": "4.7.1",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-screens": "~4.30.0",
+    "react-native-svg": "15.16.0",
+    "react-native-worklets": "0.13.0",
+    "zod": "^4.6.7",
+    "zustand": "^5.0.16"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@react-native/jest-preset": "^0.88.0",
+    "@testing-library/react-native": "^14.1.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "~19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-expo": "~58.0.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
+    "husky": "^9.1.7",
+    "jest": "^30.5.2",
+    "jest-expo": "~58.0.12",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.9.10",
+    "react-server-dom-webpack": "^19.3.0",
+    "test-renderer": "^1.3.1",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start --dev-client",
+    "start:go": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "prebuild": "expo prebuild --clean",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "maestro test e2e",
+    "build:android": "eas build --platform android --profile production",
+    "build:ios": "eas build --platform ios --profile production",
+    "db:types": "supabase gen types typescript --project-id \"$SUPABASE_PROJECT_ID\" > src/data/supabase/database.types.ts",
+    "doctor": "npx expo-doctor@latest",
+    "prepare": "husky"
+  },
+  "private": true,
+  "lint-staged": {
+    "*.{ts,tsx,js}": [
+      "eslint --fix --max-warnings=0",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
