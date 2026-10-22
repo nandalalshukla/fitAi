@@ -6,3 +6,4 @@ android
 ios
 package-lock.json
 claude-code-fitness-app-prompt.md
+src/features/exercises/replay/__fixtures__/
