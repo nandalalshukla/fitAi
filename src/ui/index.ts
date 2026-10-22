@@ -1,0 +1,37 @@
+/** Design system public API. Feature code imports from '@/ui' only. */
+export { ThemeProvider, useTheme, useAppearanceStore, resolveScheme } from './theme/ThemeProvider';
+export type { AppearancePreference } from './theme/ThemeProvider';
+export { darkTheme, lightTheme, themes } from './theme/theme';
+export type { Theme, ColorScheme } from './theme/theme';
+export type { ColorTokens } from './theme/colors';
+export type { TypographyVariant } from './theme/typography';
+export { useMotion, timing, spring, bezier } from './hooks/useMotion';
+export { haptics } from './haptics';
+
+export { AnimatedCounter } from './components/AnimatedCounter';
+export { BottomSheet } from './components/BottomSheet';
+export { Button } from './components/Button';
+export type { ButtonProps } from './components/Button';
+export { Card } from './components/Card';
+export { Chip } from './components/Chip';
+export { EmptyState } from './components/EmptyState';
+export { ErrorState } from './components/ErrorState';
+export { ExerciseTile } from './components/ExerciseTile';
+export { Icon } from './components/Icon';
+export type { IconName } from './components/Icon';
+export { ListItem } from './components/ListItem';
+export { Modal } from './components/Modal';
+export { PlanCard } from './components/PlanCard';
+export { PressableScale } from './components/PressableScale';
+export { ProgressRing } from './components/ProgressRing';
+export { Screen } from './components/Screen';
+export { SectionHeader } from './components/SectionHeader';
+export { Skeleton } from './components/Skeleton';
+export { Stagger } from './components/Stagger';
+export { StatTile } from './components/StatTile';
+export { Stepper } from './components/Stepper';
+export { Tabs } from './components/Tabs';
+export type { TabOption } from './components/Tabs';
+export { Text } from './components/Text';
+export { ToastProvider, useToast } from './components/Toast';
+export { Countdown } from './components/Countdown';
