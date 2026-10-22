@@ -3,8 +3,9 @@
 AI fitness coach for Android and iOS. Pick a plan, tap **Start today's workout**, and the phone
 camera counts your reps, checks your form in real time and coaches you by voice — 100 % on-device.
 
-> Status: **Phase 2 (Pose spike)** complete — on-device BlazePose via VisionCamera 5 + TFLite,
-> Skia skeleton, Pose lab benchmark. Device FPS numbers pending (see `docs/POSE_SPIKE.md`).
+> Status: **Phase 3 (Domain engine)** complete — geometry, One-Euro smoothing, 11 camera-tracked
+> exercises with rep counting + form rules, exercise classifier, keyframes, replay harness
+> (30 fixtures, 100 % rep accuracy). Device FPS numbers pending (see `docs/POSE_SPIKE.md`).
 > See the phase plan in `claude-code-fitness-app-prompt.md` §7.2.
 
 ## Stack

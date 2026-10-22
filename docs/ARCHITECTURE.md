@@ -8,9 +8,10 @@ flowchart LR
   subgraph Device
     CAM[VisionCamera frames] --> PRE[ROI preprocessing<br/>TFLite graph]
     PRE --> POSE[PoseEstimator<br/>TFLite BlazePose / MoveNet]
-    POSE --> SMOOTH[One-Euro smoothing]
+    POSE --> SMOOTH[One-Euro smoothing<br/>+ confidence gating]
     SMOOTH --> GEO[Geometry: angles,<br/>orientation, normalization]
     GEO --> ENGINE[Exercise engine<br/>rep state machine + form rules]
+    GEO --> CLS[Exercise classifier<br/>guided / free mode]
     ENGINE --> VOICE[Speech queue]
     ENGINE --> UI[Workout player UI<br/>Skia overlay]
     ENGINE --> DB[(SQLite logs)]

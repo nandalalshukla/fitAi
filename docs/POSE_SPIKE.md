@@ -50,6 +50,9 @@ npm run android            # or: npm run ios   (development build; Expo Go is no
    (e.g. squats). Note the results card (also logged as `Pose benchmark` in Metro).
 4. Report: device model, OS, model, delegate shown in the HUD (GPU/CPU), camera fps p50, pose fps
    p50/p5, inference ms p50/p95/max, max stride.
+5. (Phase 3) Under **Exercise engine** pick an exercise (or **Auto**) and do a set: the bottom-right
+   HUD shows reps, phase, form score and the latest cue. Tell me where counts are off, and if you can,
+   **Record** a set and share the JSON (see `docs/REPLAY_TESTING.md`).
 
 Fill the table below with the results (I will update thresholds/defaults accordingly):
 

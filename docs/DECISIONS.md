@@ -118,3 +118,39 @@ the reference; JS sampler kept as fallback.
 fast-tflite 3.0.1's Metal delegate throws "not yet supported", so iOS uses CoreML (config plugin
 flag). Android uses the GPU delegate (OpenCL libs declared via the plugin). `loadModelWithFallback`
 retries on CPU if a delegate fails to initialise.
+
+## ADR-014: Pure, worklet-safe exercise engine driven by typed definitions
+
+Each exercise is one data-driven `ExerciseDefinition` (features, typed thresholds with difficulty and
+view overrides, counter config, form rules, classifier signature) registered in a registry. The engine
+(`processPose`) is a deterministic state machine: One-Euro smoothing (low-confidence points held) →
+confidence gating with hysteresis (350 ms lost / 200 ms found; frames within the grace period still
+count, NaN features are skipped individually) → sticky best side and auto view → features → rep counter
+(start-zone persistence + excursion extreme; hysteresis between start/partial/peak) or hold timer →
+debounced rules with per-rule cooldown → quality score (ROM 40 pts, −3/−10/−25 per info/warning/critical,
+−10 tempo). All functions carry `'worklet'` so Phase 6 can run the engine on the camera thread; the
+Pose lab runs it on the JS thread for now (dev only).
+
+## ADR-015: View-invariant signals where 2D angles fail
+
+Front-view knee angles are badly foreshortened, so squats facing the camera and high knees use
+vertical thigh drop normalized by a **reference torso length** (running max, slowly decaying), which is
+invariant to camera yaw and to forward lean. Side-view squats keep the knee angle.
+
+## ADR-016: 3D stick-figure keyframes shared by demos, ghost overlay and tests
+
+Keyframes are joint angles of a rigid 3D skeleton (FK + orthographic projection with camera yaw),
+emitted in the canonical 21-keypoint format. One source feeds the animated demos (Phase 7), the ghost
+target overlay and deterministic synthetic test sequences, and tests assert keyframes satisfy the rep
+thresholds — content and counting can't drift apart.
+
+## ADR-017: Rule-based classifier first, learned model later
+
+A signature-based classifier over generic window features reaches 100 % top-1 on the replay fixtures
+with zero training data and is explainable. The `ExerciseClassifier` interface leaves a seam for a
+< 1 MB TFLite model once labelled device recordings exist (docs/EXERCISE_CLASSIFIER.md).
+
+## ADR-018: Pose timestamps use the worklet's monotonic ms clock
+
+`Frame.timestamp` units differ by platform; smoothing, persistence and tempo need milliseconds, so the
+frame processor stamps poses with `performance.now()` (fallback `Date.now()`).
