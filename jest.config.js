@@ -2,6 +2,9 @@
 module.exports = {
   preset: 'jest-expo',
   resolver: '<rootDir>/jest/resolver.js',
+  moduleNameMapper: {
+    '\\.(tflite)$': '<rootDir>/jest/fileStub.js',
+  },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.tsx'],
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
   transformIgnorePatterns: [

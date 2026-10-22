@@ -25,6 +25,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     bundleIdentifier: bundleId,
     supportsTablet: true,
+    infoPlist: {
+      NSCameraUsageDescription:
+        'FormFit uses the camera to count your reps and check your form. Video is processed on your device and is never recorded or uploaded.',
+    },
   },
   android: {
     package: bundleId,
@@ -35,6 +39,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       monochromeImage: './assets/android-icon-monochrome.png',
     },
     predictiveBackGestureEnabled: false,
+    permissions: ['android.permission.CAMERA'],
+    // The camera library must never record audio or ask for the microphone.
+    blockedPermissions: ['android.permission.RECORD_AUDIO'],
   },
   web: {
     favicon: './assets/favicon.png',
@@ -43,6 +50,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-router',
     'expo-font',
     'expo-localization',
+    [
+      'react-native-fast-tflite',
+      {
+        // Hardware acceleration for pose models (falls back to CPU automatically).
+        enableCoreMLDelegate: true,
+        enableAndroidGpuLibraries: true,
+      },
+    ],
     [
       'expo-splash-screen',
       {
