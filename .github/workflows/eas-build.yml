@@ -1,0 +1,31 @@
+name: EAS Build
+
+# Builds store binaries when a version tag is pushed (e.g. v1.0.0).
+# Requires the EXPO_TOKEN repository secret (see docs/RELEASE.md).
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'EAS build profile'
+        required: true
+        default: preview
+        type: choice
+        options: [development, preview, production]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: npm ci
+      - run: eas build --platform all --non-interactive --no-wait --profile ${{ github.event.inputs.profile || 'production' }}
