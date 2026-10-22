@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scheduleOnRN } from 'react-native-worklets';
 
 import { isEnabled, logger } from '@/core';
+import { allExercises, ExerciseHud, usePoseRecorder, type ExerciseId } from '@/features/exercises';
 import {
   DEFAULT_POSE_MODEL,
   POSE_MODELS,
@@ -16,6 +17,7 @@ import {
   type BenchmarkSummary,
   type EstimatorStatus,
   type PerfStats,
+  type Pose,
   type PoseModelId,
 } from '@/features/pose';
 import { useTranslation } from '@/i18n';
@@ -37,6 +39,7 @@ export default function PoseLabScreen() {
   const [skeleton, setSkeleton] = useState(true);
   const [running, setRunning] = useState<number | null>(null);
   const [result, setResult] = useState<BenchmarkSummary | null>(null);
+  const [exercise, setExercise] = useState<ExerciseId | 'auto' | 'off'>('off');
   const samples = useRef<PerfStats[]>([]);
 
   if (!isEnabled('devTools')) return <Redirect href="/" />;
@@ -62,6 +65,13 @@ export default function PoseLabScreen() {
                 pose={pose}
                 stats={stats}
                 label={`${POSE_MODELS[modelId].label} · ${statusLabel(status)}`}
+              />
+              {exercise !== 'off' ? (
+                <ExerciseHud key={exercise} pose={pose} mode={exercise} difficulty="intermediate" />
+              ) : null}
+              <RecorderControl
+                pose={pose}
+                exercise={exercise === 'off' || exercise === 'auto' ? 'squat' : exercise}
               />
               {running !== null ? (
                 <BenchmarkRecorder
@@ -129,6 +139,29 @@ export default function PoseLabScreen() {
             onPress={() => setSkeleton((v) => !v)}
           />
         </View>
+        <Text variant="overline" color="textMuted">
+          {t('poseLab.exercise')}
+        </Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] }}>
+          <Chip
+            label={t('poseLab.off')}
+            selected={exercise === 'off'}
+            onPress={() => setExercise('off')}
+          />
+          <Chip
+            label={t('poseLab.auto')}
+            selected={exercise === 'auto'}
+            onPress={() => setExercise('auto')}
+          />
+          {allExercises().map((d) => (
+            <Chip
+              key={d.id}
+              label={t(`exercises.names.${d.id}`)}
+              selected={exercise === d.id}
+              onPress={() => setExercise(d.id)}
+            />
+          ))}
+        </View>
         <View style={{ flexDirection: 'row', gap: spacing[2] }}>
           <Button
             label={t('camera.flip')}
@@ -160,6 +193,31 @@ export default function PoseLabScreen() {
           </Card>
         ) : null}
       </ScrollView>
+    </View>
+  );
+}
+
+/** Floating Record / Stop button: saves the pose stream as a replay fixture and opens the share sheet. */
+function RecorderControl({
+  pose,
+  exercise,
+}: {
+  pose: SharedValue<Pose | null>;
+  exercise: ExerciseId;
+}) {
+  const { t } = useTranslation();
+  const { spacing } = useTheme();
+  const recorder = usePoseRecorder(pose);
+  return (
+    <View style={{ position: 'absolute', left: spacing[2], bottom: spacing[2] }}>
+      <Button
+        label={recorder.recording ? t('poseLab.stopRecording') : t('poseLab.record')}
+        icon={recorder.recording ? 'stop' : 'radio-button-on'}
+        variant={recorder.recording ? 'danger' : 'secondary'}
+        onPress={() =>
+          recorder.recording ? void recorder.stop(exercise, 'intermediate') : recorder.start()
+        }
+      />
     </View>
   );
 }
