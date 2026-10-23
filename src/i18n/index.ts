@@ -1,6 +1,7 @@
 import { getLocales } from 'expo-localization';
 import { createInstance } from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import { useCallback } from 'react';
+import { initReactI18next, useTranslation } from 'react-i18next';
 
 import { en } from './locales/en';
 
@@ -28,4 +29,15 @@ if (!i18n.isInitialized) {
   });
 }
 
-export { useTranslation } from 'react-i18next';
+export { useTranslation };
+
+/** Translate with a runtime (data-driven) key, e.g. keys stored in content or engine events. */
+export type LooseT = (key: string, params?: Record<string, string | number>) => string;
+
+export function useLooseT(): LooseT {
+  const { t } = useTranslation();
+  return useCallback(
+    (key, params) => String((t as unknown as (k: string, p?: object) => unknown)(key, params)),
+    [t],
+  );
+}

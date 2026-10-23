@@ -21,3 +21,12 @@ export {
 } from './repositories';
 export { getSupabase } from './supabase/client';
 export { pendingCount } from './db/outbox';
+export {
+  queryKeys,
+  useProfileQuery,
+  useEnrollmentQuery,
+  useInProgressSessionQuery,
+  useSessionsQuery,
+  useSetsQuery,
+  useSessionQuery,
+} from './hooks';
