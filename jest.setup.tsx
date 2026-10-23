@@ -45,3 +45,69 @@ jest.mock('react-native-mmkv', () => ({
 jest.mock('@react-native-community/netinfo', () =>
   require('@react-native-community/netinfo/jest/netinfo-mock.js'),
 );
+
+// Skia renders natively; in Jest draw nothing but keep the element tree.
+jest.mock('@shopify/react-native-skia', () => {
+  const { View } = require('react-native');
+  const builder = () => {
+    const b = {
+      moveTo: () => b,
+      lineTo: () => b,
+      addCircle: () => b,
+      addArc: () => b,
+      build: () => ({}),
+    };
+    return b;
+  };
+  const Noop = () => null;
+  return {
+    Canvas: View,
+    Path: Noop,
+    Circle: Noop,
+    Group: Noop,
+    Line: Noop,
+    Rect: Noop,
+    RoundedRect: Noop,
+    SweepGradient: Noop,
+    LinearGradient: Noop,
+    vec: (x: number, y: number) => ({ x, y }),
+    Skia: { PathBuilder: { Make: builder }, Path: { Make: builder } },
+  };
+});
+
+jest.mock('expo-notifications', () => ({
+  setNotificationHandler: jest.fn(),
+  setNotificationChannelAsync: jest.fn(async () => null),
+  getPermissionsAsync: jest.fn(async () => ({ granted: false, canAskAgain: true })),
+  requestPermissionsAsync: jest.fn(async () => ({ granted: true, canAskAgain: true })),
+  cancelAllScheduledNotificationsAsync: jest.fn(async () => undefined),
+  scheduleNotificationAsync: jest.fn(async () => 'id'),
+  AndroidImportance: { DEFAULT: 3 },
+  SchedulableTriggerInputTypes: { DAILY: 'daily', DATE: 'date' },
+}));
+
+jest.mock('expo-keep-awake', () => ({
+  useKeepAwake: jest.fn(),
+  activateKeepAwakeAsync: jest.fn(async () => undefined),
+  deactivateKeepAwake: jest.fn(async () => undefined),
+}));
+
+// No camera in Jest: permission can be requested; preview renders nothing.
+jest.mock('react-native-vision-camera', () => {
+  const { View } = require('react-native');
+  return {
+    Camera: View,
+    useCameraPermission: () => ({
+      hasPermission: false,
+      canRequestPermission: true,
+      requestPermission: jest.fn(async () => true),
+    }),
+  };
+});
+
+// TFLite runs natively (Nitro); pose models are never loaded in Jest.
+jest.mock('react-native-fast-tflite', () => ({
+  loadTensorflowModel: jest.fn(async () => {
+    throw new Error('TFLite is not available in Jest');
+  }),
+}));

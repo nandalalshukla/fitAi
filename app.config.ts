@@ -56,6 +56,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-sqlite',
     'expo-secure-store',
     'expo-apple-authentication',
+    ['expo-notifications', { color: '#C6FF3D' }],
     ...(GOOGLE_IOS_URL_SCHEME
       ? [
           [
