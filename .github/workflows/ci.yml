@@ -23,7 +23,9 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
-      - run: npm test -- --ci --coverage
+      - run: npm run test:unit -- --ci --coverage
+      - name: Database migrations + RLS assertions (PGlite)
+        run: npm run test:db
       - name: Bundle check (Metro, Android + iOS)
         run: npx expo export --platform android --platform ios --output-dir dist
         env:

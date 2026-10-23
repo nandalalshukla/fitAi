@@ -1,0 +1,3 @@
+-- Workout plans and exercises ship with the app (src/content, zod-validated) and work
+-- offline, so nothing is required here. Remote plan updates can be added later as a
+-- read-only `content` table with an anon SELECT policy.

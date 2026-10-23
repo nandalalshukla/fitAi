@@ -6,7 +6,8 @@ module.exports = {
     '\\.(tflite)$': '<rootDir>/jest/fileStub.js',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.tsx'],
-  testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
+  // backend/supabase/tests run under Node's test runner (npm run test:db).
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/', '/backend/'],
   transformIgnorePatterns: [
     'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|react-native-svg|react-native-reanimated|react-native-worklets|standard-navigation)',
   ],

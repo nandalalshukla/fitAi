@@ -1,0 +1,39 @@
+# Supabase CLI config (local development: `supabase start`).
+project_id = "formfit"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 17
+
+[auth]
+enabled = true
+site_url = "formfit://"
+additional_redirect_urls = ["formfit://auth-callback"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+# Guest mode = Supabase anonymous users (upgraded later by linking an email / Google / Apple).
+enable_anonymous_sign_ins = true
+
+[auth.email]
+enable_signup = true
+# Email sign-in uses one-time codes (no deep links needed).
+enable_confirmations = true
+otp_length = 6
+otp_expiry = 900
+
+[auth.external.apple]
+enabled = true
+client_id = "env(APPLE_SERVICES_ID)"
+secret = "env(APPLE_SIGNIN_SECRET)"
+
+[auth.external.google]
+enabled = true
+client_id = "env(GOOGLE_WEB_CLIENT_ID)"
+secret = "env(GOOGLE_WEB_CLIENT_SECRET)"
+skip_nonce_check = true
