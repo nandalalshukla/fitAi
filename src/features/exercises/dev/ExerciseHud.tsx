@@ -7,7 +7,7 @@ import { useTranslation } from '@/i18n';
 import { AnimatedCounter, Text, useTheme } from '@/ui';
 
 import type { Difficulty, ExerciseId } from '../domain/types';
-import { useExerciseEngine } from './useExerciseEngine';
+import { useLiveExercise } from '../hooks/useLiveExercise';
 
 /** DEV ONLY overlay for the Pose lab: live reps, phase, quality, last form cue, classifier guess. */
 export function ExerciseHud({
@@ -22,7 +22,7 @@ export function ExerciseHud({
   const { t } = useTranslation();
   const { colors, radii, spacing } = useTheme();
   const coach = useVoiceCoach();
-  const hud = useExerciseEngine(pose, mode, difficulty, (events, avgRepMs) =>
+  const hud = useLiveExercise(pose, mode, difficulty, (events, avgRepMs) =>
     coach.handleEngineEvents(events, { targetReps: null, avgRepMs }),
   );
   const s = hud.snapshot;

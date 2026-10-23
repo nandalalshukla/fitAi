@@ -25,6 +25,8 @@ export interface PoseCameraViewProps {
     status: EstimatorStatus;
   }) => ReactNode;
   testID?: string;
+  /** Called when the camera can't be used (permission permanently denied, model failed). */
+  onUnavailable?: (reason: 'permission' | 'model') => void;
 }
 
 function useAppActive() {
@@ -48,6 +50,7 @@ export function PoseCameraView({
   formLevel,
   children,
   testID,
+  onUnavailable,
 }: PoseCameraViewProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -55,6 +58,12 @@ export function PoseCameraView({
   const focused = useIsFocused();
   const appActive = useAppActive();
   const { frameOutput, pose, stats, status } = usePoseFrameProcessor({ modelId });
+  const denied = !permission.hasPermission && !permission.canRequestPermission;
+  const failed = status.state === 'error';
+  useEffect(() => {
+    if (denied) onUnavailable?.('permission');
+    else if (failed) onUnavailable?.('model');
+  }, [denied, failed, onUnavailable]);
 
   if (!permission.hasPermission) {
     return permission.canRequestPermission ? (

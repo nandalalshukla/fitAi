@@ -7,3 +7,6 @@ export type { EngineSnapshot, EngineState, EngineOptions } from './domain/engine
 export { createRuleClassifier, createModeController } from './domain/classifier';
 export type * from './domain/types';
 export { ANIMATIONS } from './animation/keyframes/library';
+export { useLiveExercise } from './hooks/useLiveExercise';
+export type { LiveExerciseState, LiveFormLevel } from './hooks/useLiveExercise';
+export { ExerciseDemo, hasDemo } from './components/ExerciseDemo';
