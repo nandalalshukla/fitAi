@@ -229,3 +229,23 @@ A session row is created at the first set; every set (including skipped ones, fl
 
 Reminders (daily time + streak-saver nudge) are computed by `planReminders()` from settings and
 history and re-applied whenever either changes (cancel all + reschedule). No server push is needed.
+
+## ADR-032: One keyframe model for every exercise demo
+
+All 54 demos (tracked and not) use the pose engine's skeleton via the same forward-kinematics
+model, extended with a whole-body `roll`, sideways `offsetX`, `forearmAbd` and a `ground` anchor so
+side-lying and floor work look right. No video or image assets: total content stays tiny, works
+offline and doubles as the ghost target. A contact-sheet tool and a dev gallery replace eyeballing
+on a device for keyframe review.
+
+## ADR-033: Library text is English content data
+
+Exercise and plan text lives in typed content files (English), validated by zod; UI chrome and
+voice cues are i18n keys. Form cues of tracked exercises reference the voice-cue keys so spoken and
+written cues match. Translating the library later means adding per-locale content files.
+
+## ADR-034: Knee travel is a technique cue, not a safety alarm
+
+Research (Fry et al. 2003) shows forward knee travel in squats/lunges is normal and blocking it
+shifts load to the hips and back. The lunge rule fires only on large travel and now says “Take a
+longer step” instead of “keep your knee behind your toes”.

@@ -55,3 +55,44 @@ Add `cues.*` (≤ 4 spoken words) and `form.*` (on-screen sentence) to `src/i18n
 
 Pose lab → pick the exercise → do 10 reps → check the HUD count and cues. Record a set
 (Record → Stop & share), set `expect.reps` in the JSON, and commit it to `replay/__fixtures__/`.
+
+# Adding a library exercise (not camera-tracked)
+
+Most of the library (warm-ups, variations, mobility) is not camera-tracked. Adding one takes two files.
+
+## 1. Content — `src/content/exercises/*.ts`
+
+Add an `ExerciseInfo` (schema in `src/content/schema.ts`) to the matching file (`upper`, `lower`,
+`coreCardioMobility`, `manual`). Required: `name`, `category`, `difficulty`, primary/secondary
+muscles, `equipment`, `tracked: null`, `mode` (`reps`/`time`), `repSeconds` (typical pace, used for
+session-length estimates), `perSide`, a one-line `summary`, **3–8 numbered `steps`** (setup →
+movement → end position, with breathing and where to look/brace), `tips`, `mistakes` with fixes,
+at least one `easier` and one `harder` variation (link `exerciseId` when it is in the library),
+`safety` and `camera`. Write in your own words.
+
+## 2. Keyframes — `src/features/exercises/animation/keyframes/catalog.ts`
+
+Build poses with `pose(base, overrides)` from the bases (`STANDING`, `PRONE_HIGH`, `SUPINE`,
+`QUADRUPED`, `PRONE_FLAT`, `HOOK_LYING`, `KNEE_PLANK`) and wrap them with a helper:
+
+- `rep(id, start, peak, opts)` — start → peak (held) → start
+- `hold(id, pose, opts)` — static hold with a subtle breathing motion
+- `alternate(id, start, leftPeak, rightPeak, opts)` — alternating sides
+
+Joint conventions (see `body3d.ts`): sagittal angles are world angles from straight down, positive
+forward; `torsoPitch` is from vertical (+90 prone, −90 supine); `roll` tips the whole body onto its
+left side (side planks, clamshells); `offsetX/Y/Z` translate (jumps, skaters); `shinAbd` and
+`forearmAbd` let the shin/forearm leave the thigh/upper-arm plane. Use `anchor: 'ground'` for
+anything touching the floor with more than the feet (the lowest point sits on the floor and the
+feet don't slide), `'floor'` for standing moves.
+
+Keyframe `step` numbers must match the instruction steps (step-synced guide). Add the animation to
+the `CATALOG_ANIMATIONS` list at the bottom of the file.
+
+## 3. Check it
+
+- `npx jest src/content src/features/exercises/animation` — schema, variation links, demo present,
+  step numbers ≤ number of steps, rigid limbs, joint ranges, loop-perfect keyframes.
+- `npm run animations:sheet` (optionally `IDS=my_exercise`) writes
+  `tools/content/out/animation-sheet.html`: every keyframe as a stick figure with a floor line.
+- In a dev build: **Settings → Exercise animations (dev)** plays every demo side by side.
