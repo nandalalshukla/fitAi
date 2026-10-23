@@ -9,4 +9,6 @@ export type * from './domain/types';
 export { ANIMATIONS } from './animation/keyframes/library';
 export { useLiveExercise } from './hooks/useLiveExercise';
 export type { LiveExerciseState, LiveFormLevel } from './hooks/useLiveExercise';
-export { ExerciseDemo, hasDemo } from './components/ExerciseDemo';
+export { ExerciseDemo, hasDemo, stepTime } from './components/ExerciseDemo';
+export type { DemoAnnotation } from './components/ExerciseDemo';
+export { CUE_ANCHORS } from './components/demoAnnotations';

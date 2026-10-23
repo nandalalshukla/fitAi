@@ -117,6 +117,7 @@ function AppNavigator() {
           options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
         />
         <Stack.Screen name="dev/design-system" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="dev/animations" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen
           name="dev/pose-lab"
           options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }}

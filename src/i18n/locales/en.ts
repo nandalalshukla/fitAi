@@ -115,6 +115,9 @@ export const en = {
     demo: 'Animated demonstration of {{name}}',
     noDemo: 'Animated demo coming soon for this exercise.',
     step: 'Step {{n}}',
+    prevStep: 'Previous step',
+    nextStep: 'Next step',
+    stepHint: 'Tap a step to see that position; press Play to loop the movement.',
     categories: {
       lower_body: 'Lower body',
       upper_body: 'Upper body',
@@ -280,6 +283,7 @@ export const en = {
     volumeHigh: 'High',
     testVoice: 'Test voice',
     poseLab: 'Pose lab (dev)',
+    animations: 'Exercise animations (dev)',
     workout: 'Workout & camera',
     useCamera: 'Camera coach',
     useCameraHint: 'Count reps and check form with the camera',

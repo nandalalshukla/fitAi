@@ -3,10 +3,9 @@ import { useState, type ReactNode } from 'react';
 import { View, useWindowDimensions } from 'react-native';
 
 import { getExerciseInfo, type ExerciseInfo } from '@/content';
-import { ExerciseDemo, hasDemo } from '@/features/exercises';
+import { CUE_ANCHORS, ExerciseDemo, hasDemo, stepTime } from '@/features/exercises';
 import { useLooseT, useTranslation } from '@/i18n';
 import {
-  Card,
   Chip,
   ErrorState,
   Icon,
@@ -79,37 +78,8 @@ export default function ExerciseDetailScreen() {
       </Stagger>
 
       <Stagger index={1}>
-        <DemoPanel info={info} />
+        <GuidePanel info={info} />
       </Stagger>
-
-      <Section title={t('exercises.howTo')}>
-        {info.steps.map((step, i) => (
-          <View
-            key={step}
-            style={{ flexDirection: 'row', gap: spacing[3] }}
-            accessible
-            accessibilityLabel={`${t('exercises.step', { n: i + 1 })}. ${step}`}
-          >
-            <View
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: radii.pill,
-                backgroundColor: colors.accentMuted,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Text variant="label" color="accentText">
-                {i + 1}
-              </Text>
-            </View>
-            <Text variant="body" style={{ flex: 1 }}>
-              {step}
-            </Text>
-          </View>
-        ))}
-      </Section>
 
       {info.formCues.length > 0 || info.tips.length > 0 ? (
         <Section title={t('exercises.formCues')}>
@@ -182,74 +152,156 @@ export default function ExerciseDetailScreen() {
   );
 }
 
-function DemoPanel({ info }: { info: ExerciseInfo }) {
+function GuidePanel({ info }: { info: ExerciseInfo }) {
   const { t } = useTranslation();
+  const lt = useLooseT();
   const { spacing, colors, radii } = useTheme();
   const { reduceMotion } = useMotion();
   const { width } = useWindowDimensions();
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState<0.5 | 1>(1);
   const [view, setView] = useState<'side' | 'front' | null>(null);
+  const [step, setStep] = useState(1);
+  // Step-synced mode: a tapped step (or Reduce Motion) holds the figure on that step.
+  const [held, setHeld] = useState<number | null>(reduceMotion ? 1 : null);
   const size = Math.min(width - spacing[5] * 2, 420);
+  const steps = info.steps.length;
+  const shown = held ?? step;
 
-  if (!hasDemo(info.id)) {
-    return (
-      <Card>
-        <View style={{ flexDirection: 'row', gap: spacing[3], alignItems: 'center' }}>
-          <Icon name="body-outline" size="xl" color="textSubtle" />
-          <Text variant="body" color="textMuted" style={{ flex: 1 }}>
-            {t('exercises.noDemo')}
+  const hold = (n: number) => {
+    const s = Math.min(steps, Math.max(1, n));
+    setHeld(s);
+    setStep(s);
+  };
+  const holdAt = held !== null ? (stepTime(info.id, held) ?? stepTime(info.id, 1)) : null;
+  const annotations = info.formCues
+    .filter((c) => CUE_ANCHORS[c] !== undefined)
+    .slice(0, 2)
+    .map((c) => ({ keypoint: CUE_ANCHORS[c]!, label: lt(c) }));
+
+  return (
+    <View style={{ gap: spacing[4] }}>
+      {hasDemo(info.id) ? (
+        <View style={{ gap: spacing[2] }}>
+          <View
+            style={{
+              borderRadius: radii.xl,
+              backgroundColor: colors.surface,
+              borderWidth: 1,
+              borderColor: colors.border,
+              overflow: 'hidden',
+            }}
+          >
+            <ExerciseDemo
+              exercise={info.id}
+              width={size}
+              height={size * 0.75}
+              playing={playing}
+              speed={speed}
+              holdAt={holdAt}
+              onStep={held === null ? setStep : undefined}
+              highlight={info.primaryMuscles}
+              annotations={annotations}
+              yawDeg={view === null ? undefined : view === 'side' ? 90 : 0}
+              accessibilityLabel={t('exercises.demo', { name: info.name })}
+            />
+          </View>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] }}>
+            {reduceMotion ? (
+              <>
+                <Chip
+                  testID="demo-prev-step"
+                  icon="chevron-back"
+                  label={t('exercises.prevStep')}
+                  onPress={() => hold(shown - 1)}
+                />
+                <Chip
+                  testID="demo-next-step"
+                  icon="chevron-forward"
+                  label={t('exercises.nextStep')}
+                  onPress={() => hold(shown + 1)}
+                />
+              </>
+            ) : (
+              <>
+                <Chip
+                  testID="demo-play"
+                  icon={playing && held === null ? 'pause' : 'play'}
+                  label={playing && held === null ? t('exercises.pause') : t('exercises.play')}
+                  onPress={() => {
+                    if (held !== null) {
+                      setHeld(null);
+                      setPlaying(true);
+                    } else setPlaying((p) => !p);
+                  }}
+                />
+                <Chip
+                  testID="demo-speed"
+                  label={t('exercises.speed', { speed: speed === 1 ? 0.5 : 1 })}
+                  onPress={() => setSpeed((s) => (s === 1 ? 0.5 : 1))}
+                />
+              </>
+            )}
+            <Chip
+              label={t('exercises.sideView')}
+              selected={view === 'side'}
+              onPress={() => setView('side')}
+            />
+            <Chip
+              label={t('exercises.frontView')}
+              selected={view === 'front'}
+              onPress={() => setView('front')}
+            />
+          </View>
+          <Text variant="caption" color="textSubtle">
+            {t('exercises.stepHint')}
           </Text>
         </View>
-      </Card>
-    );
-  }
-  return (
-    <View style={{ gap: spacing[2] }}>
-      <View
-        style={{
-          borderRadius: radii.xl,
-          backgroundColor: colors.surface,
-          borderWidth: 1,
-          borderColor: colors.border,
-          overflow: 'hidden',
-        }}
-      >
-        <ExerciseDemo
-          exercise={info.id}
-          width={size}
-          height={size * 0.75}
-          playing={playing}
-          speed={speed}
-          yawDeg={view === null ? undefined : view === 'side' ? 90 : 0}
-          accessibilityLabel={t('exercises.demo', { name: info.name })}
-        />
-      </View>
-      {reduceMotion ? null : (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] }}>
-          <Chip
-            testID="demo-play"
-            icon={playing ? 'pause' : 'play'}
-            label={playing ? t('exercises.pause') : t('exercises.play')}
-            onPress={() => setPlaying((p) => !p)}
-          />
-          <Chip
-            testID="demo-speed"
-            label={t('exercises.speed', { speed: speed === 1 ? 0.5 : 1 })}
-            onPress={() => setSpeed((s) => (s === 1 ? 0.5 : 1))}
-          />
-          <Chip
-            label={t('exercises.sideView')}
-            selected={view === 'side'}
-            onPress={() => setView('side')}
-          />
-          <Chip
-            label={t('exercises.frontView')}
-            selected={view === 'front'}
-            onPress={() => setView('front')}
-          />
-        </View>
-      )}
+      ) : null}
+
+      <Section title={t('exercises.howTo')}>
+        {info.steps.map((text, i) => {
+          const active = shown === i + 1;
+          return (
+            <PressableScale
+              key={text}
+              testID={`step-${i + 1}`}
+              onPress={() => hold(i + 1)}
+              haptic="tap"
+              accessibilityRole="button"
+              accessibilityState={{ selected: active }}
+              accessibilityLabel={`${t('exercises.step', { n: i + 1 })}. ${text}`}
+              style={{
+                flexDirection: 'row',
+                gap: spacing[3],
+                padding: spacing[2],
+                borderRadius: radii.md,
+                borderWidth: 1,
+                borderColor: active ? colors.accent : 'transparent',
+                backgroundColor: active ? colors.accentMuted : 'transparent',
+              }}
+            >
+              <View
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: radii.pill,
+                  backgroundColor: active ? colors.accent : colors.accentMuted,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text variant="label" color={active ? 'onAccent' : 'accentText'}>
+                  {i + 1}
+                </Text>
+              </View>
+              <Text variant={active ? 'bodyStrong' : 'body'} style={{ flex: 1 }}>
+                {text}
+              </Text>
+            </PressableScale>
+          );
+        })}
+      </Section>
     </View>
   );
 }

@@ -154,6 +154,10 @@ describe('navigation shell', () => {
     expect(await screen.findByTestId('exercise-detail-screen')).toBeTruthy();
     expect(router.getPathname()).toBe('/exercise/plank');
     expect(screen.getByText(/How to do it/i)).toBeTruthy();
+    // Step-synced guide: tapping a step holds the demo on it and highlights it.
+    await fireEvent.press(screen.getByTestId('step-3'));
+    expect(screen.getByTestId('step-3')).toBeSelected();
+    expect(screen.getByTestId('step-1')).not.toBeSelected();
   });
 
   it('offers to resume an interrupted workout at the next set', async () => {
