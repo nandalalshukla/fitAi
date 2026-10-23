@@ -1,3 +1,11 @@
+// Gesture Handler's official Jest mocks (avoids UI-runtime bindings in tests).
+require('react-native-gesture-handler/jestSetup');
+// Gesture Handler asks worklets for the UI runtime holder; the JS fallback used in Jest throws.
+jest.mock('react-native-worklets', () => ({
+  ...jest.requireActual('react-native-worklets'),
+  getUIRuntimeHolder: () => ({}),
+}));
+
 // Reanimated ships a Jest mock that runs animations synchronously.
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
