@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useVoiceCoach } from '@/features/voice';
 import { useTranslation } from '@/i18n';
 import {
   AnimatedCounter,
@@ -25,6 +26,7 @@ export default function WorkoutScreen() {
   const insets = useSafeAreaInsets();
   const [phase, setPhase] = useState<'countdown' | 'active'>('countdown');
   const [reps, setReps] = useState(0);
+  const coach = useVoiceCoach();
   const target = 20;
 
   return (
@@ -48,7 +50,15 @@ export default function WorkoutScreen() {
 
       <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
         {phase === 'countdown' ? (
-          <Countdown onDone={() => setPhase('active')} />
+          <Countdown
+            onTick={(n) =>
+              coach.say({ id: 'countdown', textKey: 'voice.countdown', params: { count: n } })
+            }
+            onDone={() => {
+              coach.say({ id: 'go', textKey: 'voice.go' });
+              setPhase('active');
+            }}
+          />
         ) : (
           <PressableScale
             testID="rep-tap"
@@ -56,7 +66,22 @@ export default function WorkoutScreen() {
             accessibilityLabel="Add a rep"
             onPress={() => {
               haptics.rep();
-              setReps((r) => Math.min(target, r + 1));
+              const next = Math.min(target, reps + 1);
+              setReps(next);
+              coach.handleEngineEvents(
+                [
+                  {
+                    type: 'rep',
+                    t: Date.now(),
+                    reps: next,
+                    quality: 100,
+                    durationMs: 2000,
+                    tooFast: false,
+                    violations: [],
+                  },
+                ],
+                { targetReps: target, avgRepMs: 2000 },
+              );
             }}
           >
             <ProgressRing progress={reps / target} size={280} strokeWidth={14} gradient>

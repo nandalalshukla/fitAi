@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import type { SharedValue } from 'react-native-reanimated';
 
 import type { Pose } from '@/features/pose/domain/types';
+import { useVoiceCoach } from '@/features/voice';
 import { useTranslation } from '@/i18n';
 import { AnimatedCounter, Text, useTheme } from '@/ui';
 
@@ -20,7 +21,10 @@ export function ExerciseHud({
 }) {
   const { t } = useTranslation();
   const { colors, radii, spacing } = useTheme();
-  const hud = useExerciseEngine(pose, mode, difficulty);
+  const coach = useVoiceCoach();
+  const hud = useExerciseEngine(pose, mode, difficulty, (events, avgRepMs) =>
+    coach.handleEngineEvents(events, { targetReps: null, avgRepMs }),
+  );
   const s = hud.snapshot;
   const cueColor =
     hud.lastCue?.severity === 'critical'

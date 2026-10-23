@@ -42,12 +42,19 @@ export function useExerciseEngine(
   pose: SharedValue<Pose | null>,
   mode: ExerciseId | 'auto',
   difficulty: Difficulty = 'intermediate',
+  /** Receives engine events (e.g. to speak them) with the running average rep duration. */
+  onEvents?: (events: EngineEvent[], avgRepMs: number | null) => void,
 ): EngineHudState {
   const engine = useRef<EngineState | null>(null);
   const classifier = useRef(createRuleClassifier());
   const controller = useRef(createModeController('free'));
   const torsoRef = useRef(0);
   const lastClassify = useRef(0);
+  const avgRepMs = useRef<number | null>(null);
+  const onEventsRef = useRef(onEvents);
+  useEffect(() => {
+    onEventsRef.current = onEvents;
+  }, [onEvents]);
   // Parents remount this hook (React `key`) when the mode changes, so state starts fresh.
   const [hud, setHud] = useState<EngineHudState>(() => ({
     ...EMPTY,
@@ -86,6 +93,12 @@ export function useExerciseEngine(
           }
         }
       }
+      for (const e of events) {
+        if (e.type === 'rep')
+          avgRepMs.current =
+            avgRepMs.current === null ? e.durationMs : avgRepMs.current * 0.7 + e.durationMs * 0.3;
+      }
+      if (events.length > 0) onEventsRef.current?.(events, avgRepMs.current);
       if (events.length === 0 && classification === null) return;
       setHud((prev) => {
         let lastCue = prev.lastCue;
