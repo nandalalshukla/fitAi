@@ -3,9 +3,9 @@
 AI fitness coach for Android and iOS. Pick a plan, tap **Start today's workout**, and the phone
 camera counts your reps, checks your form in real time and coaches you by voice — 100 % on-device.
 
-> Status: **Phase 3 (Domain engine)** complete — geometry, One-Euro smoothing, 11 camera-tracked
-> exercises with rep counting + form rules, exercise classifier, keyframes, replay harness
-> (30 fixtures, 100 % rep accuracy). Device FPS numbers pending (see `docs/POSE_SPIKE.md`).
+> Status: **Phase 4 (Voice)** complete — prioritized speech queue, translatable cue catalog, music
+> ducking (iOS speech session / Android audio focus), voice settings. Phase 3 engine: 11 exercises,
+> 30 replay fixtures at 100 % rep accuracy. Device numbers pending (see `docs/POSE_SPIKE.md`).
 > See the phase plan in `claude-code-fitness-app-prompt.md` §7.2.
 
 ## Stack
@@ -13,7 +13,7 @@ camera counts your reps, checks your form in real time and coaches you by voice 
 Expo SDK 58 (React Native 0.88, New Architecture, dev builds) · TypeScript strict · Expo Router ·
 Reanimated 4 + Gesture Handler · VisionCamera 5 + react-native-fast-tflite (BlazePose) · Skia ·
 Zustand · i18next · zod · Jest + React Native Testing Library · ESLint + Prettier + Husky +
-commitlint. Upcoming: expo-speech,
+commitlint · expo-speech (+ local audio-focus module). Upcoming:
 expo-sqlite + MMKV, Supabase, Sentry. Rationale in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
 ## Getting started

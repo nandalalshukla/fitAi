@@ -12,7 +12,7 @@ flowchart LR
     SMOOTH --> GEO[Geometry: angles,<br/>orientation, normalization]
     GEO --> ENGINE[Exercise engine<br/>rep state machine + form rules]
     GEO --> CLS[Exercise classifier<br/>guided / free mode]
-    ENGINE --> VOICE[Speech queue]
+    ENGINE --> VOICE[Voice coach<br/>priority queue + ducking]
     ENGINE --> UI[Workout player UI<br/>Skia overlay]
     ENGINE --> DB[(SQLite logs)]
     DB --> SYNC[Sync engine<br/>outbox]

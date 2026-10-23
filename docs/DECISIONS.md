@@ -154,3 +154,22 @@ with zero training data and is explainable. The `ExerciseClassifier` interface l
 
 `Frame.timestamp` units differ by platform; smoothing, persistence and tempo need milliseconds, so the
 frame processor stamps poses with `performance.now()` (fallback `Date.now()`).
+
+## ADR-019: expo-speech for TTS
+
+expo-speech (SDK-versioned, maintained, no extra native setup) covers language, voice, rate, pitch,
+volume and per-utterance callbacks. react-native-tts would add ducking options on Android but is a
+community package with slower New-Architecture support; the missing piece (audio focus) is a ~60-line
+local module instead.
+
+## ADR-020: Duck, don't pause, the user's music
+
+iOS: `useApplicationAudioSession: false` (system speech session mixes + ducks). Android: transient
+"may duck" audio focus only while the coach speaks, released 350 ms after the queue drains. The app
+never takes long-lived focus, so music apps keep playing at full volume between cues.
+
+## ADR-021: Speech queue semantics
+
+One utterance at a time; strict priorities (form > counts > encouragement, countdown may interrupt);
+per-cue cooldown 4.5 s; counts coalesce and expire after 1.5 s; bounded queue. Pure and unit-tested
+with fake timers (no real TTS needed).

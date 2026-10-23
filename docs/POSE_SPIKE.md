@@ -53,6 +53,8 @@ npm run android            # or: npm run ios   (development build; Expo Go is no
 5. (Phase 3) Under **Exercise engine** pick an exercise (or **Auto**) and do a set: the bottom-right
    HUD shows reps, phase, form score and the latest cue. Tell me where counts are off, and if you can,
    **Record** a set and share the JSON (see `docs/REPLAY_TESTING.md`).
+6. (Phase 4) Voice: with music playing, check the spoken counts/cues and ducking — checklist in
+   `docs/VOICE.md` → "Verify on a device".
 
 Fill the table below with the results (I will update thresholds/defaults accordingly):
 
