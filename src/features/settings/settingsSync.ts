@@ -4,6 +4,8 @@ import { currentUserId } from '@/features/auth/authStore';
 import { useAppearanceStore } from '@/ui';
 
 import { getVoiceSettings, useVoiceSettings } from './voiceSettingsStore';
+import { getWorkoutPrefs, useWorkoutPrefs } from './workoutPrefsStore';
+import { getReminderSettings, useReminderSettings } from '@/features/reminders/reminderStore';
 
 /**
  * Mirrors device settings (MMKV) into the synced `user_settings` row so they
@@ -14,7 +16,12 @@ let saveTimer: ReturnType<typeof setTimeout> | null = null;
 let applying = false;
 
 function snapshot() {
-  return { voice: getVoiceSettings(), appearance: useAppearanceStore.getState().preference };
+  return {
+    voice: getVoiceSettings(),
+    appearance: useAppearanceStore.getState().preference,
+    workout: getWorkoutPrefs(),
+    reminders: getReminderSettings(),
+  };
 }
 
 function scheduleSave() {
@@ -43,6 +50,8 @@ async function applyRemote() {
   try {
     if (data.voice) useVoiceSettings.getState().update(data.voice);
     if (data.appearance) useAppearanceStore.getState().setPreference(data.appearance);
+    if (data.workout) useWorkoutPrefs.getState().update(data.workout);
+    if (data.reminders) useReminderSettings.getState().update(data.reminders);
   } finally {
     applying = false;
   }
@@ -52,6 +61,8 @@ export function startSettingsSync(): () => void {
   const unsubs = [
     useVoiceSettings.subscribe(scheduleSave),
     useAppearanceStore.subscribe(scheduleSave),
+    useWorkoutPrefs.subscribe(scheduleSave),
+    useReminderSettings.subscribe(scheduleSave),
     onSyncComplete((r) => {
       if (r.pulled > 0) void applyRemote();
     }),

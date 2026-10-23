@@ -15,6 +15,8 @@ const schema = z.object({
   /** OAuth client IDs are public identifiers (not secrets). */
   EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: z.string().min(1).optional(),
   EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: z.string().min(1).optional(),
+  /** Public support address for "Help & feedback" (hidden when unset). */
+  EXPO_PUBLIC_SUPPORT_EMAIL: z.email().optional(),
 });
 
 export type PublicEnv = z.infer<typeof schema>;
@@ -41,6 +43,7 @@ export const env: PublicEnv = parseEnv({
   EXPO_PUBLIC_ANALYTICS_HOST: process.env.EXPO_PUBLIC_ANALYTICS_HOST,
   EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
   EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+  EXPO_PUBLIC_SUPPORT_EMAIL: process.env.EXPO_PUBLIC_SUPPORT_EMAIL,
 });
 
 export const isBackendConfigured = (e: PublicEnv = env) =>

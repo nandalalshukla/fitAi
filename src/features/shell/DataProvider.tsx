@@ -6,6 +6,8 @@ import { AppState, View } from 'react-native';
 import { logger } from '@/core';
 import { initData, onSyncComplete, syncNow } from '@/data';
 import { authService } from '@/features/auth';
+import { ReminderScheduler } from '@/features/reminders';
+import { startPreferenceEffects } from '@/features/settings/preferenceEffects';
 import { startSettingsSync } from '@/features/settings/settingsSync';
 import { ErrorState, Skeleton, useTheme } from '@/ui';
 
@@ -56,6 +58,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (state !== 'ready') return;
     const stopSettings = startSettingsSync();
+    const stopPrefs = startPreferenceEffects();
     const offSync = onSyncComplete((r) => {
       if (r.pulled > 0) void queryClient.invalidateQueries();
     });
@@ -71,6 +74,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const interval = setInterval(() => void syncNow(), SYNC_INTERVAL_MS);
     return () => {
       stopSettings();
+      stopPrefs();
       offSync();
       offNet();
       appState.remove();
@@ -104,5 +108,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
       </View>
     );
   }
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ReminderScheduler />
+      {children}
+    </QueryClientProvider>
+  );
 }

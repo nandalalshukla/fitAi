@@ -100,10 +100,17 @@ function AppNavigator() {
         }}
       >
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="onboarding" options={{ animation: 'fade', gestureEnabled: false }} />
+        <Stack.Screen name="exercise/[id]" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="legal/[doc]" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="plan/[id]" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen
           name="workout/index"
           options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name="workout/summary"
+          options={{ animation: 'fade', gestureEnabled: false }}
         />
         <Stack.Screen
           name="auth/sign-in"
