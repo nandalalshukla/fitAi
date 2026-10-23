@@ -39,7 +39,10 @@ Barlow Condensed (display/numerals) + Inter (UI). `Text` caps dynamic-type scali
 `Text`, `Icon`, `PressableScale`, `Button`, `Card`, `PlanCard`, `ExerciseTile`, `ProgressRing`,
 `AnimatedCounter`, `StatTile`, `Chip`, `Tabs`, `Stepper`, `ListItem`, `SectionHeader`, `Skeleton`,
 `EmptyState`, `ErrorState`, `Modal`, `BottomSheet`, `Toast` (`ToastProvider` + `useToast`),
-`Countdown`, `Stagger`, `Screen`.
+`Countdown`, `Stagger`, `Screen`, `Switch`, `TextField`, `OptionCard` (radio/checkbox choice
+cards), `BarChart` (bars grow in, tap for value, each bar labelled for screen readers), `Heatmap`
+(training calendar), `PulseIcon` (streak flame), `Confetti` (session complete; skipped under
+Reduce Motion).
 
 A live gallery is available in dev builds: **Settings → Design system (dev)** (`/dev/design-system`).
 
