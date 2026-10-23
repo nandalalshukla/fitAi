@@ -1,6 +1,7 @@
 import {
   anchorBody,
   forwardKinematics,
+  rollBody,
   type Body3D,
   type BodyPose3D,
   type LimbAngles,
@@ -24,6 +25,9 @@ function lerpLimb(a: LimbAngles, b: LimbAngles, k: number): LimbAngles {
     shoulderFlex: a.shoulderFlex + (b.shoulderFlex - a.shoulderFlex) * k,
     shoulderAbd: a.shoulderAbd + (b.shoulderAbd - a.shoulderAbd) * k,
     elbow: a.elbow + (b.elbow - a.elbow) * k,
+    forearmAbd:
+      (a.forearmAbd ?? a.shoulderAbd) +
+      ((b.forearmAbd ?? b.shoulderAbd) - (a.forearmAbd ?? a.shoulderAbd)) * k,
   };
 }
 
@@ -36,6 +40,8 @@ export function lerpPose(a: BodyPose3D, b: BodyPose3D, k: number): BodyPose3D {
     right: lerpLimb(a.right, b.right, k),
     offsetY: a.offsetY + (b.offsetY - a.offsetY) * k,
     offsetZ: a.offsetZ + (b.offsetZ - a.offsetZ) * k,
+    offsetX: (a.offsetX ?? 0) + ((b.offsetX ?? 0) - (a.offsetX ?? 0)) * k,
+    roll: (a.roll ?? 0) + ((b.roll ?? 0) - (a.roll ?? 0)) * k,
   };
 }
 
@@ -70,11 +76,16 @@ export function bodyAt(anim: ExerciseAnimation, t: number, posture?: BodyPose3D)
   'worklet';
   const p = posture ?? poseAt(anim, t);
   // Anchor relative to the first keyframe standing on the floor, so planted points don't drift.
-  const reference = anchorBody(forwardKinematics(anim.keyframes[0]!.pose), 'floor', null);
+  const first = anim.keyframes[0]!.pose;
+  const reference = anchorBody(
+    rollBody(forwardKinematics(first), first.roll ?? 0),
+    anim.anchor === 'ground' ? 'ground' : 'floor',
+    null,
+  );
   const body = anchorBody(
-    forwardKinematics(p),
+    rollBody(forwardKinematics(p), p.roll ?? 0),
     anim.anchor,
     anim.anchor === 'floor' ? null : reference,
   );
-  return body.map((v) => [v[0], v[1] + p.offsetY, v[2] + p.offsetZ]);
+  return body.map((v) => [v[0] + (p.offsetX ?? 0), v[1] + p.offsetY, v[2] + p.offsetZ]);
 }

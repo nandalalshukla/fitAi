@@ -104,7 +104,8 @@
     "models:fetch": "node scripts/fetch-models.mjs",
     "fixtures:generate": "GENERATE_FIXTURES=1 jest src/features/exercises/replay/generateFixtures",
     "test:unit": "jest",
-    "test:db": "node --experimental-strip-types --no-warnings --test backend/supabase/tests/rls.test.mts"
+    "test:db": "node --experimental-strip-types --no-warnings --test backend/supabase/tests/rls.test.mts",
+    "animations:sheet": "ANIMATION_SHEET=1 jest tools/content/animationSheet.test.ts"
   },
   "private": true,
   "lint-staged": {

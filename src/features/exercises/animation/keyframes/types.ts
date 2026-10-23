@@ -11,7 +11,8 @@ export interface Keyframe {
 
 /** Keyframe animation of one exercise rep (or hold), shared by demos, ghost overlay and tests. */
 export interface ExerciseAnimation {
-  id: ExerciseId;
+  /** Catalog exercise id (camera-tracked ones match the engine's ExerciseId). */
+  id: ExerciseId | (string & {});
   /** Preferred camera yaw for the demo (90 side, 0 front). */
   yawDeg: number;
   /** Duration of one loop at 1× speed, ms. */

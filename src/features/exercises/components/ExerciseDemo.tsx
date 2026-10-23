@@ -13,14 +13,14 @@ import {
 import { KP, SKELETON_EDGES } from '@/features/pose/domain/keypoints';
 import { useMotion, useTheme } from '@/ui';
 
-import { bodyAt } from '../animation/interpolate';
 import { project } from '../animation/body3d';
-import { ANIMATIONS } from '../animation/keyframes/library';
+import { getAnimation } from '../animation';
+import { bodyAt } from '../animation/interpolate';
 import type { ExerciseAnimation } from '../animation/keyframes/types';
-import type { ExerciseId } from '../domain/types';
 
 export interface ExerciseDemoProps {
-  exercise: ExerciseId;
+  /** Catalog exercise id (must have an animation, see `hasDemo`). */
+  exercise: string;
   width: number;
   height: number;
   playing?: boolean;
@@ -83,7 +83,7 @@ export function ExerciseDemo({
 }: ExerciseDemoProps) {
   const { colors } = useTheme();
   const { reduceMotion } = useMotion();
-  const anim = ANIMATIONS[exercise];
+  const anim = getAnimation(exercise)!;
   const yaw = yawDeg ?? anim.yawDeg;
   const fit = useMemo(() => computeFit(anim, yaw, width, height), [anim, yaw, width, height]);
   const t = useSharedValue(reduceMotion ? anim.peakT : 0);
@@ -158,4 +158,4 @@ export function ExerciseDemo({
   );
 }
 
-export const hasDemo = (id: string): id is ExerciseId => id in ANIMATIONS;
+export const hasDemo = (id: string): boolean => getAnimation(id) !== undefined;

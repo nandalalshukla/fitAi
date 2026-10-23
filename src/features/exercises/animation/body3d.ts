@@ -27,6 +27,8 @@ export interface LimbAngles {
   shoulderAbd: number;
   /** Elbow flexion (forearm = upper arm + elbow), 0 = straight. */
   elbow: number;
+  /** Forearm abduction; defaults to `shoulderAbd` (e.g. 0 = forearm flat on the floor in a side plank). */
+  forearmAbd?: number;
 }
 
 export interface BodyPose3D {
@@ -39,6 +41,13 @@ export interface BodyPose3D {
   /** Extra root translation (body units) applied after anchoring, e.g. jump height. */
   offsetY: number;
   offsetZ: number;
+  /** Sideways translation (+ = subject's left), e.g. skater jumps. Default 0. */
+  offsetX?: number;
+  /**
+   * Whole-body roll about the forward axis, degrees (+ = tipping onto the left side).
+   * Lets side-lying moves (side plank, clamshell) reuse the sagittal joint model. Default 0.
+   */
+  roll?: number;
 }
 
 export const PROPORTIONS = {
@@ -100,7 +109,11 @@ export function forwardKinematics(p: BodyPose3D): Body3D {
     const toe = add(add(ankle, fwd, P.toeFront), footUp, -P.ankleHeight);
     const shoulder = add(shoulderC, [side * P.shoulderHalf, 0, 0]);
     const elbow = add(shoulder, limbDir(l.shoulderFlex, l.shoulderAbd, side), P.upperArm);
-    const wrist = add(elbow, limbDir(l.shoulderFlex + l.elbow, l.shoulderAbd, side), P.forearm);
+    const wrist = add(
+      elbow,
+      limbDir(l.shoulderFlex + l.elbow, l.forearmAbd ?? l.shoulderAbd, side),
+      P.forearm,
+    );
     out[isLeft ? KP.left_hip : KP.right_hip] = hip;
     out[isLeft ? KP.left_knee : KP.right_knee] = knee;
     out[isLeft ? KP.left_ankle : KP.right_ankle] = ankle;
@@ -124,7 +137,21 @@ export function forwardKinematics(p: BodyPose3D): Body3D {
   return out;
 }
 
-export type Anchor = 'leftAnkle' | 'floor' | 'wrists' | 'shoulders' | 'hips';
+/** Rotates the body about the forward (z) axis through the hip centre by `deg`. */
+export function rollBody(body: Body3D, deg: number): Body3D {
+  'worklet';
+  if (deg === 0) return body;
+  const r = deg * RAD;
+  const c = Math.cos(r);
+  const s = Math.sin(r);
+  return body.map((v) => [v[0] * c + v[1] * s, -v[0] * s + v[1] * c, v[2]] as Vec3);
+}
+
+/**
+ * What stays put across keyframes. 'floor': lowest foot point on the floor. 'ground': lowest
+ * point of the whole body on the floor (knees, hands, back…) with the feet not sliding.
+ */
+export type Anchor = 'leftAnkle' | 'floor' | 'ground' | 'wrists' | 'shoulders' | 'hips';
 
 /**
  * Translates the body so the anchor stays put across keyframes (feet planted,
@@ -151,7 +178,12 @@ export function anchorBody(body: Body3D, anchor: Anchor, reference: Body3D | nul
         return [0, 0, 0];
     }
   };
-  if (anchor === 'floor') {
+  if (anchor === 'ground') {
+    let minY = Infinity;
+    for (const v of body) minY = Math.min(minY, v[1]);
+    dy = -minY;
+    if (reference) dz = (reference[KP.left_ankle]?.[2] ?? 0) - (body[KP.left_ankle]?.[2] ?? 0);
+  } else if (anchor === 'floor') {
     let minY = Infinity;
     for (const k of [KP.left_heel, KP.right_heel, KP.left_foot_index, KP.right_foot_index]) {
       minY = Math.min(minY, body[k]?.[1] ?? Infinity);
