@@ -7,3 +7,4 @@ export type { FeatureFlag } from './featureFlags';
 export { getService, registerServices, resetServices } from './services';
 export type { Services } from './services';
 export type { Analytics, AnalyticsProps } from './analytics';
+export { kv, mmkvStateStorage } from './storage';

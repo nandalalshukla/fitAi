@@ -23,3 +23,25 @@ jest.mock('@expo/vector-icons/Ionicons', () => {
   const Icon = ({ name, ...props }: { name: string }) => <Text {...props}>{name}</Text>;
   return { __esModule: true, default: Icon };
 });
+
+// MMKV (Nitro) can't load in Jest: in-memory replacement with the API we use.
+jest.mock('react-native-mmkv', () => ({
+  createMMKV: () => {
+    const m = new Map<string, string | number | boolean>();
+    return {
+      getString: (k: string) => (typeof m.get(k) === 'string' ? (m.get(k) as string) : undefined),
+      getNumber: (k: string) => (typeof m.get(k) === 'number' ? (m.get(k) as number) : undefined),
+      getBoolean: (k: string) =>
+        typeof m.get(k) === 'boolean' ? (m.get(k) as boolean) : undefined,
+      set: (k: string, v: string | number | boolean) => void m.set(k, v),
+      remove: (k: string) => m.delete(k),
+      contains: (k: string) => m.has(k),
+      getAllKeys: () => [...m.keys()],
+      clearAll: () => m.clear(),
+    };
+  },
+}));
+
+jest.mock('@react-native-community/netinfo', () =>
+  require('@react-native-community/netinfo/jest/netinfo-mock.js'),
+);

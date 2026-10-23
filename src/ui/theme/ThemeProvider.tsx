@@ -1,6 +1,9 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+
+import { mmkvStateStorage } from '@/core/storage';
 
 import { themes, type ColorScheme, type Theme } from './theme';
 
@@ -13,13 +16,17 @@ interface AppearanceState {
 
 /**
  * Appearance preference. Dark is the brand default; users can opt into
- * following the system setting or forcing light. Persisted via the settings
- * store once MMKV is wired in (Phase 5).
+ * following the system setting or forcing light. Persisted in MMKV.
  */
-export const useAppearanceStore = create<AppearanceState>((set) => ({
-  preference: 'dark',
-  setPreference: (preference) => set({ preference }),
-}));
+export const useAppearanceStore = create<AppearanceState>()(
+  persist(
+    (set) => ({
+      preference: 'dark',
+      setPreference: (preference) => set({ preference }),
+    }),
+    { name: 'appearance', storage: createJSONStorage(() => mmkvStateStorage), version: 1 },
+  ),
+);
 
 export function resolveScheme(
   preference: AppearancePreference,
