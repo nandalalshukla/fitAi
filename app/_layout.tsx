@@ -25,6 +25,7 @@ import { useEffect, useMemo } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { DataProvider } from '@/features/shell/DataProvider';
 import { ThemeProvider, ToastProvider, useTheme } from '@/ui';
 
 void SplashScreen.preventAutoHideAsync();
@@ -53,7 +54,9 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <ThemeProvider>
           <ToastProvider>
-            <AppNavigator />
+            <DataProvider>
+              <AppNavigator />
+            </DataProvider>
           </ToastProvider>
         </ThemeProvider>
       </SafeAreaProvider>
@@ -101,6 +104,10 @@ function AppNavigator() {
         <Stack.Screen
           name="workout/index"
           options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name="auth/sign-in"
+          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
         />
         <Stack.Screen name="dev/design-system" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen

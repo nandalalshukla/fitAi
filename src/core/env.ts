@@ -12,6 +12,9 @@ const schema = z.object({
   EXPO_PUBLIC_SENTRY_DSN: z.url().optional(),
   EXPO_PUBLIC_ANALYTICS_KEY: z.string().min(1).optional(),
   EXPO_PUBLIC_ANALYTICS_HOST: z.url().optional(),
+  /** OAuth client IDs are public identifiers (not secrets). */
+  EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: z.string().min(1).optional(),
+  EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: z.string().min(1).optional(),
 });
 
 export type PublicEnv = z.infer<typeof schema>;
@@ -36,6 +39,8 @@ export const env: PublicEnv = parseEnv({
   EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN,
   EXPO_PUBLIC_ANALYTICS_KEY: process.env.EXPO_PUBLIC_ANALYTICS_KEY,
   EXPO_PUBLIC_ANALYTICS_HOST: process.env.EXPO_PUBLIC_ANALYTICS_HOST,
+  EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+  EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
 });
 
 export const isBackendConfigured = (e: PublicEnv = env) =>
