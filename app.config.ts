@@ -10,6 +10,8 @@ const IS_PREVIEW = APP_VARIANT === 'preview';
 
 const BASE_ID = process.env.APP_BUNDLE_ID ?? 'com.formfit.app';
 const bundleId = IS_DEV ? `${BASE_ID}.dev` : IS_PREVIEW ? `${BASE_ID}.preview` : BASE_ID;
+// Google Sign-In needs the reversed iOS client ID as a URL scheme; only added when configured.
+const GOOGLE_IOS_URL_SCHEME = process.env.GOOGLE_IOS_URL_SCHEME;
 const appName = IS_DEV ? 'FormFit (Dev)' : IS_PREVIEW ? 'FormFit (Preview)' : 'FormFit';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -25,6 +27,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     bundleIdentifier: bundleId,
     supportsTablet: true,
+    usesAppleSignIn: true,
     infoPlist: {
       NSCameraUsageDescription:
         'FormFit uses the camera to count your reps and check your form. Video is processed on your device and is never recorded or uploaded.',
@@ -50,6 +53,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-router',
     'expo-font',
     'expo-localization',
+    'expo-sqlite',
+    'expo-secure-store',
+    'expo-apple-authentication',
+    ...(GOOGLE_IOS_URL_SCHEME
+      ? [
+          [
+            '@react-native-google-signin/google-signin',
+            { iosUrlScheme: GOOGLE_IOS_URL_SCHEME },
+          ] as [string, unknown],
+        ]
+      : []),
     [
       'react-native-fast-tflite',
       {

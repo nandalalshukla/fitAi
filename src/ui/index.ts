@@ -36,3 +36,4 @@ export { Text } from './components/Text';
 export { ToastProvider, useToast } from './components/Toast';
 export { Countdown } from './components/Countdown';
 export { Switch } from './components/Switch';
+export { TextField } from './components/TextField';
