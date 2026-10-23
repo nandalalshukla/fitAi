@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { View } from 'react-native';
 
 import { isEnabled } from '@/core';
+import { VoiceSettingsSection } from '@/features/settings/VoiceSettingsSection';
 import { useTranslation } from '@/i18n';
 import {
   Card,
@@ -39,6 +40,7 @@ export default function SettingsScreen() {
           ]}
         />
       </View>
+      <VoiceSettingsSection />
       {isEnabled('devTools') ? (
         <Card padding={2}>
           <ListItem

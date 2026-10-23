@@ -35,3 +35,4 @@ export type { TabOption } from './components/Tabs';
 export { Text } from './components/Text';
 export { ToastProvider, useToast } from './components/Toast';
 export { Countdown } from './components/Countdown';
+export { Switch } from './components/Switch';
