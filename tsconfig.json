@@ -6,7 +6,8 @@
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@modules/*": ["./modules/*"]
     },
     "types": ["jest", "node"]
   },

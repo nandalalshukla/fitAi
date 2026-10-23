@@ -1,0 +1,7 @@
+{
+  "name": "audio-focus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FormFit local Expo module: duck other audio (music) while the voice coach speaks (Android audio focus).",
+  "main": "index.ts"
+}
