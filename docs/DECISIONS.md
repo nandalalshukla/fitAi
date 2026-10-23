@@ -198,3 +198,34 @@ Keychain/Keystore-held key keeps tokens encrypted at rest without that limit.
 
 Policies are tested against real Postgres (PGlite, WASM) in CI with no Docker or hosted project,
 so a policy regression fails the build.
+
+## ADR-027: Plan progress is completion-based
+
+The enrollment's `current_day` advances when the day's session is finished (or a rest day is
+marked done), not by the calendar. Missing a day never silently skips training or a progression
+step; Today always shows the next thing to do.
+
+## ADR-028: Plans authored compactly and compiled
+
+Plans are written as session templates + a weekly pattern + typed progression rules (volume per
+week, optional set increases, rest reduction, deload weeks) and compiled into the full day-by-day
+schedule. Tests assert every compiled day: valid exercises, rest days present, progression, deload
+weeks lighter, and estimated session length within ±15 % of the advertised minutes.
+
+## ADR-029: Exercise engine on the JS thread, driven by the pose shared value
+
+Inference stays in the camera worklet; the (cheap, < 1 ms) pure engine runs on JS via
+`scheduleOnRN` per pose and only sets React state when it emits an event (rep, form, visibility)
+or the classifier re-runs (1 Hz). This keeps one implementation shared with tests/replays and
+the voice coach. If profiling shows JS pressure, the engine can move into a worklet unchanged.
+
+## ADR-030: Persist each set immediately; resume from saved sets
+
+A session row is created at the first set; every set (including skipped ones, flagged
+`skipped`) is saved when it ends. Resume rebuilds the player from the plan day and the saved
+`set_index`es. Ending with no completed set marks the session `abandoned` (not in history).
+
+## ADR-031: Local notifications planned by a pure function
+
+Reminders (daily time + streak-saver nudge) are computed by `planReminders()` from settings and
+history and re-applied whenever either changes (cancel all + reschedule). No server push is needed.
