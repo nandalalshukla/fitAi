@@ -173,3 +173,28 @@ never takes long-lived focus, so music apps keep playing at full volume between 
 One utterance at a time; strict priorities (form > counts > encouragement, countdown may interrupt);
 per-cue cooldown 4.5 s; counts coalesce and expire after 1.5 s; bounded queue. Pure and unit-tested
 with fake timers (no real TTS needed).
+
+## ADR-022: Offline-first SQLite with an outbox
+
+All reads/writes hit local SQLite; a per-record outbox pushes to Supabase when online. Workouts
+happen in gyms with bad signal, so the network must never block a set from being saved.
+
+## ADR-023: Last-writer-wins by client `updated_at`, pull by server `synced_at`
+
+Records are small and edited by one person, so LWW is enough (no CRDTs). Server-side `lww_guard`
+drops stale writes; the pull cursor uses the server clock so client skew can't hide rows.
+
+## ADR-024: Anonymous guests instead of a sign-up wall
+
+Supabase anonymous users (with a local-only fallback) let people start immediately; upgrading
+keeps their history. Guests are told data lives only on the phone until they create an account.
+
+## ADR-025: Encrypted session in MMKV, key in SecureStore
+
+SecureStore has value-size limits that Supabase sessions can exceed; MMKV + AES-CTR with a
+Keychain/Keystore-held key keeps tokens encrypted at rest without that limit.
+
+## ADR-026: Test RLS on PGlite
+
+Policies are tested against real Postgres (PGlite, WASM) in CI with no Docker or hosted project,
+so a policy regression fails the build.

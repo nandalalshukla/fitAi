@@ -3,9 +3,10 @@
 AI fitness coach for Android and iOS. Pick a plan, tap **Start today's workout**, and the phone
 camera counts your reps, checks your form in real time and coaches you by voice — 100 % on-device.
 
-> Status: **Phase 4 (Voice)** complete — prioritized speech queue, translatable cue catalog, music
-> ducking (iOS speech session / Android audio focus), voice settings. Phase 3 engine: 11 exercises,
-> 30 replay fixtures at 100 % rep accuracy. Device numbers pending (see `docs/POSE_SPIKE.md`).
+> Status: **Phase 5 (Data & backend)** complete — offline-first SQLite + outbox sync to Supabase
+> (RLS verified on real Postgres), guest → account upgrade (email code / Google / Apple), export
+> and delete-account. Phase 4 voice, Phase 3 engine (11 exercises, 100 % replay accuracy).
+> Device numbers pending (see `docs/POSE_SPIKE.md`).
 > See the phase plan in `claude-code-fitness-app-prompt.md` §7.2.
 
 ## Stack
