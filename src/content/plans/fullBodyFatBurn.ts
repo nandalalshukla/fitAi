@@ -1,7 +1,10 @@
 import type { PlanSource } from '../schema';
 import { activeRecovery, standardCooldown, standardWarmup } from './common';
 
-/** Full-Body Fat Burn (provisional seed): interval-style conditioning, 4 days a week. */
+/**
+ * Full-Body Fat Burn: interval-style conditioning 4 days a week (WHO aerobic + strengthening
+ * targets in one). Work:rest moves from ~1:1 towards 2:1 as rests shorten; week 4 deloads.
+ */
 export const fullBodyFatBurn: PlanSource = {
   id: 'full_body_fat_burn',
   title: 'Full-Body Fat Burn',
@@ -33,7 +36,13 @@ export const fullBodyFatBurn: PlanSource = {
             { exerciseId: 'jumping_jack', sets: 3, reps: 40, restS: 20 },
             { exerciseId: 'high_knees', sets: 3, seconds: 30, restS: 30 },
             { exerciseId: 'squat', sets: 3, reps: 20, restS: 30 },
-            { exerciseId: 'mountain_climber', sets: 3, seconds: 30, restS: 30 },
+            {
+              exerciseId: 'mountain_climber',
+              sets: 3,
+              seconds: 30,
+              restS: 30,
+              progressTo: [{ fromWeek: 5, exerciseId: 'burpee' }],
+            },
             { exerciseId: 'push_up', sets: 3, reps: 12, restS: 30 },
             { exerciseId: 'lunge', sets: 3, reps: 10, restS: 30 },
           ],
@@ -60,7 +69,7 @@ export const fullBodyFatBurn: PlanSource = {
             { exerciseId: 'jumping_jack', sets: 3, reps: 40, restS: 20 },
             { exerciseId: 'sit_up', sets: 3, reps: 15, restS: 30 },
             { exerciseId: 'mountain_climber', sets: 3, seconds: 30, restS: 30 },
-            { exerciseId: 'squat', sets: 3, reps: 20, restS: 30 },
+            { exerciseId: 'plank_shoulder_tap', sets: 3, reps: 10, restS: 30 },
           ],
         },
         {

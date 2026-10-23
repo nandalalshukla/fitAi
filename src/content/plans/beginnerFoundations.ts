@@ -1,7 +1,10 @@
 import type { PlanSource } from '../schema';
 import { activeRecovery, standardCooldown, standardWarmup } from './common';
 
-/** Beginner Foundations (provisional seed): first 4 weeks, 3 short full-body days. */
+/**
+ * Beginner Foundations: first 4 weeks, 3 short full-body days (WHO: muscle strengthening on 2+
+ * days/week; ACSM novice frequency 2–3 days). Push-ups progress incline → knee → full.
+ */
 export const beginnerFoundations: PlanSource = {
   id: 'beginner_foundations',
   title: 'Beginner Foundations',
@@ -31,11 +34,17 @@ export const beginnerFoundations: PlanSource = {
           title: 'Main',
           items: [
             { exerciseId: 'squat', sets: 2, reps: 10, restS: 60 },
-            { exerciseId: 'push_up', sets: 2, reps: 6, restS: 60 },
+            {
+              exerciseId: 'incline_push_up',
+              sets: 2,
+              reps: 8,
+              restS: 60,
+              progressTo: [{ fromWeek: 3, exerciseId: 'knee_push_up' }],
+            },
             { exerciseId: 'glute_bridge', sets: 2, reps: 12, restS: 60 },
             { exerciseId: 'jumping_jack', sets: 2, reps: 20, restS: 45 },
             { exerciseId: 'plank', sets: 2, seconds: 20, restS: 45 },
-            { exerciseId: 'crunch', sets: 2, reps: 10, restS: 45 },
+            { exerciseId: 'curl_up', sets: 2, reps: 5, restS: 45 },
           ],
         },
         standardCooldown(),
@@ -50,12 +59,12 @@ export const beginnerFoundations: PlanSource = {
           kind: 'main',
           title: 'Main',
           items: [
-            { exerciseId: 'lunge', sets: 2, reps: 8, restS: 60 },
+            { exerciseId: 'reverse_lunge', sets: 2, reps: 8, restS: 60 },
             { exerciseId: 'squat', sets: 2, reps: 10, restS: 60 },
             { exerciseId: 'glute_bridge', sets: 2, reps: 12, restS: 60 },
-            { exerciseId: 'dead_bug', sets: 2, reps: 6, restS: 45 },
+            { exerciseId: 'bird_dog', sets: 2, reps: 6, restS: 45 },
             { exerciseId: 'side_plank', sets: 2, seconds: 15, restS: 45 },
-            { exerciseId: 'march_in_place', sets: 2, seconds: 60, restS: 30 },
+            { exerciseId: 'dead_bug', sets: 2, reps: 6, restS: 45 },
           ],
         },
         standardCooldown(),

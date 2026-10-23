@@ -2,8 +2,9 @@ import type { PlanSource } from '../schema';
 import { activeRecovery, standardCooldown, standardWarmup } from './common';
 
 /**
- * 6-Pack Abs Builder (provisional seed; refined after the content research pass).
- * ~60 min daily home sessions: full-body strength + a dedicated core circuit.
+ * 6-Pack Abs Builder: ~60 min home sessions, 5 days + 1 active recovery a week. Full-body
+ * strength keeps energy expenditure high; a varied core circuit trains flexion, anti-extension,
+ * anti-rotation and lateral stability. Honest about spot reduction (Vispute et al. 2011).
  */
 export const sixPackAbs: PlanSource = {
   id: 'six_pack_abs',
@@ -14,7 +15,7 @@ export const sixPackAbs: PlanSource = {
   equipment: ['none', 'mat'],
   minutesPerSession: 60,
   summary:
-    'An hour a day of full-body bodyweight strength plus a focused core circuit, building week by week.',
+    'An hour a day alternating upper- and lower-body strength, each with a focused core circuit.',
   whatToExpect: [
     'A stronger, more stable core and better endurance for push-ups, squats and planks.',
     'Visible abs depend mostly on body-fat level, which is driven by nutrition and sleep. This plan builds the muscle; your diet decides whether it shows.',
@@ -27,18 +28,25 @@ export const sixPackAbs: PlanSource = {
   sessions: {
     A: {
       title: 'Push, squat & core',
-      focus: 'Chest, legs and the front of the core',
+      focus: 'Chest, shoulders, a light squat block and the front of the core',
       blocks: [
         standardWarmup([{ exerciseId: 'jumping_jack', sets: 1, reps: 30, restS: 30, fixed: true }]),
         {
           kind: 'main',
           title: 'Strength',
           items: [
-            { exerciseId: 'push_up', sets: 3, reps: 15, restS: 60 },
-            { exerciseId: 'squat', sets: 2, reps: 20, restS: 60 },
+            {
+              exerciseId: 'push_up',
+              sets: 4,
+              reps: 15,
+              restS: 60,
+              progressTo: [{ fromWeek: 5, exerciseId: 'decline_push_up' }],
+            },
+            { exerciseId: 'squat', sets: 2, reps: 20, restS: 45 },
+            { exerciseId: 'pike_push_up', sets: 3, reps: 8, restS: 75 },
+            { exerciseId: 'prone_y_raise', sets: 3, reps: 12, restS: 45 },
+            { exerciseId: 'superman', sets: 3, reps: 12, restS: 45 },
             { exerciseId: 'jumping_jack', sets: 2, reps: 30, restS: 30 },
-            { exerciseId: 'lunge', sets: 3, reps: 10, restS: 60 },
-            { exerciseId: 'glute_bridge', sets: 3, reps: 15, restS: 45 },
           ],
         },
         {
@@ -64,7 +72,7 @@ export const sixPackAbs: PlanSource = {
       ],
     },
     B: {
-      title: 'Legs, cardio & core',
+      title: 'Lower body, cardio & core',
       focus: 'Legs, glutes, conditioning and the deep core',
       blocks: [
         standardWarmup([{ exerciseId: 'jumping_jack', sets: 1, reps: 30, restS: 30, fixed: true }]),
@@ -72,10 +80,10 @@ export const sixPackAbs: PlanSource = {
           kind: 'main',
           title: 'Strength',
           items: [
-            { exerciseId: 'squat', sets: 3, reps: 20, restS: 60 },
-            { exerciseId: 'lunge', sets: 3, reps: 12, restS: 60 },
+            { exerciseId: 'squat', sets: 4, reps: 20, restS: 60 },
+            { exerciseId: 'reverse_lunge', sets: 3, reps: 12, restS: 60 },
             { exerciseId: 'glute_bridge', sets: 3, reps: 20, restS: 45 },
-            { exerciseId: 'push_up', sets: 2, reps: 12, restS: 60 },
+            { exerciseId: 'calf_raise', sets: 2, reps: 20, restS: 30 },
             { exerciseId: 'high_knees', sets: 3, seconds: 30, restS: 30 },
           ],
         },
@@ -83,7 +91,7 @@ export const sixPackAbs: PlanSource = {
           kind: 'main',
           title: 'Core circuit',
           items: [
-            { exerciseId: 'sit_up', sets: 3, reps: 15, restS: 45 },
+            { exerciseId: 'bird_dog', sets: 3, reps: 8, restS: 30 },
             { exerciseId: 'dead_bug', sets: 3, reps: 10, restS: 30 },
             { exerciseId: 'side_plank', sets: 3, seconds: 30, restS: 30 },
             { exerciseId: 'leg_raise', sets: 3, reps: 12, restS: 45 },

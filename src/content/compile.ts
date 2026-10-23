@@ -45,7 +45,11 @@ export type ExerciseLookup = (id: string) => ExerciseInfo | undefined;
 
 /** Working seconds of one set (both sides for per-side exercises). */
 export function setWorkSeconds(item: PlanItem, info: ExerciseInfo | undefined): number {
-  const base = item.seconds ?? (item.reps ?? 0) * (info?.repSeconds ?? 3);
+  // A prescribed tempo ("3-1-1") sets the rep duration; otherwise the exercise's typical pace.
+  const perRep = item.tempo
+    ? item.tempo.split('-').reduce((a, d) => a + Number(d), 0)
+    : (info?.repSeconds ?? 3);
+  const base = item.seconds ?? (item.reps ?? 0) * perRep;
   return info?.perSide ? base * 2 : base;
 }
 
@@ -68,6 +72,11 @@ export function progressItem(
   week: number,
   p: Progression,
 ): PlanItem {
+  // Swap in the latest harder variation that applies this week.
+  const variation = item.progressTo
+    ?.filter((v) => v.fromWeek <= week)
+    .sort((a, b) => b.fromWeek - a.fromWeek)[0];
+  if (variation) item = { ...item, exerciseId: variation.exerciseId };
   if (item.fixed || kind === 'warmup' || kind === 'cooldown') return item;
   const deload = p.deloadWeeks.includes(week);
   // Deload weeks don't count towards progression; the week after resumes where it left off.

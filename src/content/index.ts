@@ -1,6 +1,9 @@
 import { compilePlan, type Plan } from './compile';
+import { coreCardioMobilityExercises } from './exercises/coreCardioMobility';
+import { lowerExercises } from './exercises/lower';
 import { manualExercises } from './exercises/manual';
 import { trackedExercises } from './exercises/tracked';
+import { upperExercises } from './exercises/upper';
 import { planSources } from './plans';
 import type { ExerciseInfo } from './schema';
 
@@ -8,7 +11,13 @@ import type { ExerciseInfo } from './schema';
  * Content catalog: exercise library + plans compiled to day-by-day schedules.
  * Everything is static, offline and validated by `src/content/__tests__`.
  */
-export const exerciseCatalog: readonly ExerciseInfo[] = [...trackedExercises, ...manualExercises];
+export const exerciseCatalog: readonly ExerciseInfo[] = [
+  ...trackedExercises,
+  ...upperExercises,
+  ...lowerExercises,
+  ...manualExercises,
+  ...coreCardioMobilityExercises,
+];
 
 const byId = new Map(exerciseCatalog.map((e) => [e.id, e]));
 

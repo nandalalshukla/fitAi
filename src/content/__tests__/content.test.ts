@@ -1,4 +1,5 @@
 import { getExercise } from '@/features/exercises';
+import { getAnimation } from '@/features/exercises/animation';
 import { en } from '@/i18n/locales/en';
 
 import { exerciseCatalog, getExerciseInfo, plans } from '..';
@@ -37,6 +38,22 @@ describe('exercise catalog', () => {
           expect(known).toContain(key);
         }
       }
+    }
+  });
+
+  it('has at least 40 exercises, each with an animated demo synced to its steps', () => {
+    expect(exerciseCatalog.length).toBeGreaterThanOrEqual(40);
+    for (const e of exerciseCatalog) {
+      const anim = getAnimation(e.id);
+      expect([e.id, anim !== undefined]).toEqual([e.id, true]);
+      const maxStep = Math.max(...anim!.keyframes.map((k) => k.step ?? 1));
+      expect([e.id, maxStep <= e.steps.length]).toEqual([e.id, true]);
+    }
+  });
+
+  it('offers an easier and a harder option for every exercise', () => {
+    for (const e of exerciseCatalog) {
+      expect([e.id, e.easier.length > 0, e.harder.length > 0]).toEqual([e.id, true, true]);
     }
   });
 
@@ -108,6 +125,46 @@ describe('plans', () => {
       expect(volume(w)).toBeLessThan(volume(w - 1));
   });
 
+  it.each(plans.map((p) => [p.id, p] as const))(
+    '%s does not load the same big muscles hard on consecutive days',
+    (_id, plan) => {
+      // Hard sets per primary muscle (main + finisher). Core and calves recover quickly and
+      // are commonly trained daily at moderate volume, so they are excluded.
+      const BIG = new Set([
+        'quads',
+        'glutes',
+        'hamstrings',
+        'chest',
+        'triceps',
+        'shoulders',
+        'upper_back',
+      ]);
+      const load = (day: (typeof plan.schedule)[number]) => {
+        const m = new Map<string, number>();
+        if (day.type !== 'workout') return m;
+        for (const b of day.session!.blocks) {
+          if (b.kind !== 'main' && b.kind !== 'finisher') continue;
+          for (const i of b.items)
+            for (const muscle of getExerciseInfo(i.exerciseId)!.primaryMuscles)
+              if (BIG.has(muscle)) m.set(muscle, (m.get(muscle) ?? 0) + i.sets);
+        }
+        return m;
+      };
+      for (let d = 1; d < plan.schedule.length; d++) {
+        const a = load(plan.schedule[d - 1]!);
+        const b = load(plan.schedule[d]!);
+        for (const [muscle, sets] of a) {
+          const both = Math.min(sets, b.get(muscle) ?? 0);
+          expect([plan.schedule[d]!.day, muscle, both < 6]).toEqual([
+            plan.schedule[d]!.day,
+            muscle,
+            true,
+          ]);
+        }
+      }
+    },
+  );
+
   it('the 6-pack plan is a ~60 minute session with the required blocks', () => {
     const plan = plans.find((p) => p.id === 'six_pack_abs')!;
     expect(plan.minutesPerSession).toBe(60);
@@ -151,6 +208,20 @@ describe('compiler', () => {
     );
     // 15 s transition + 3 × (10 reps × 3 s + 60 s rest)
     expect(secs).toBe(15 + 3 * (30 + 60));
+  });
+
+  it('uses the prescribed tempo for rep duration', () => {
+    const secs = estimateSessionSeconds(
+      [{ kind: 'main', title: 'Main', items: [{ ...item, tempo: '3-1-1' }] }],
+      getExerciseInfo,
+    );
+    expect(secs).toBe(15 + 3 * (10 * 5 + 60));
+  });
+
+  it('swaps in harder variations from their week', () => {
+    const it2: PlanItem = { ...item, progressTo: [{ fromWeek: 3, exerciseId: 'jump_squat' }] };
+    expect(progressItem(it2, 'main', 2, p).exerciseId).toBe('squat');
+    expect(progressItem(it2, 'main', 3, p).exerciseId).toBe('jump_squat');
   });
 
   it('rejects unknown session keys', () => {

@@ -113,6 +113,10 @@ export const PlanItemSchema = z
       .optional(),
     /** Excluded from weekly progression (warm-up, mobility, technique work). */
     fixed: z.boolean().optional(),
+    /** Harder variations swapped in from a given week (e.g. incline → knee → full push-ups). */
+    progressTo: z
+      .array(z.object({ fromWeek: z.number().int().min(2), exerciseId: slug }).strict())
+      .optional(),
   })
   .strict()
   .refine((i) => (i.reps === undefined) !== (i.seconds === undefined), {

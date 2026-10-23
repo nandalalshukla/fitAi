@@ -169,7 +169,7 @@ export const en = {
     allTheWayUp: 'All the way up',
     liftShoulders: 'Lift your shoulders higher',
     neckRelaxed: "Don't pull on your neck",
-    kneeBehindToes: 'Keep your knee behind your toes',
+    kneeBehindToes: 'Take a longer step',
     torsoUpright: 'Stay upright',
     kneesHigher: 'Knees higher',
     kneesToChest: 'Drive your knees to your chest',
@@ -214,7 +214,8 @@ export const en = {
     armsHigher: 'Bring your arms all the way overhead.',
     feetWider: 'Jump your feet wider than your hips.',
     neckRelaxed: 'Relax your neck and lead with your chest.',
-    kneeBehindToes: 'Your front knee is travelling past your toes. Take a longer step.',
+    kneeBehindToes:
+      'Your front knee is travelling far past your toes. Take a longer step so your shin stays more upright.',
     torsoUpright: 'Keep your torso upright.',
     ribsDown: 'You are arching your lower back. Squeeze your glutes, ribs down.',
     legsStraight: 'Keep your legs straight, or bend slightly if your back lifts.',
