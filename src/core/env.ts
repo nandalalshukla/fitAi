@@ -6,12 +6,17 @@ import { z } from 'zod';
  * access) for inlining to work. Secrets must NEVER be read here.
  * See `.env.example` for documentation of every variable.
  */
+/** Outside development, network endpoints must use HTTPS. */
+const secureUrl = z
+  .url()
+  .refine((u) => __DEV__ || u.startsWith('https://'), { message: 'must use https' });
+
 const schema = z.object({
-  EXPO_PUBLIC_SUPABASE_URL: z.url().optional(),
+  EXPO_PUBLIC_SUPABASE_URL: secureUrl.optional(),
   EXPO_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).optional(),
   EXPO_PUBLIC_SENTRY_DSN: z.url().optional(),
   EXPO_PUBLIC_ANALYTICS_KEY: z.string().min(1).optional(),
-  EXPO_PUBLIC_ANALYTICS_HOST: z.url().optional(),
+  EXPO_PUBLIC_ANALYTICS_HOST: secureUrl.optional(),
   /** OAuth client IDs are public identifiers (not secrets). */
   EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: z.string().min(1).optional(),
   EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: z.string().min(1).optional(),

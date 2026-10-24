@@ -27,8 +27,13 @@ export function AccountSection() {
       `formfit-export-${new Date().toISOString().slice(0, 10)}.json`,
     );
     await file.write(JSON.stringify(r.value, null, 2));
-    if (await Sharing.isAvailableAsync())
-      await Sharing.shareAsync(file.uri, { mimeType: 'application/json' });
+    try {
+      if (await Sharing.isAvailableAsync())
+        await Sharing.shareAsync(file.uri, { mimeType: 'application/json' });
+    } finally {
+      // The export contains personal data: don't leave a copy in the app cache.
+      if (file.exists) file.delete();
+    }
     track('data_exported', {});
     toast.show({ message: t('account.exportDone'), kind: 'success' });
   };

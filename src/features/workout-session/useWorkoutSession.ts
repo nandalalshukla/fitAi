@@ -43,7 +43,9 @@ async function load(
   const { workouts, plans } = getDataRuntime().repos;
   if (params.resumeId) {
     const session = await workouts.getSession(params.resumeId);
-    if (!session) throw new Error('Session not found');
+    // Deep links can carry any id: only the owner's unfinished sessions can be resumed.
+    if (!session || session.userId !== userId || session.status !== 'in_progress')
+      throw new Error('Session not found');
     const sets = await workouts.getSets(session.id);
     const saved: SetResult[] = sets.map((x) => ({
       stepIndex: x.setIndex,

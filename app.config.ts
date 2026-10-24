@@ -45,6 +45,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       monochromeImage: './assets/android-icon-monochrome.png',
     },
     predictiveBackGestureEnabled: false,
+    // Workout history stays out of OS cloud backups; it syncs through the account instead.
+    allowBackup: false,
     permissions: ['android.permission.CAMERA'],
     // The camera library must never record audio or ask for the microphone.
     blockedPermissions: ['android.permission.RECORD_AUDIO'],

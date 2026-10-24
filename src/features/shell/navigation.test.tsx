@@ -154,6 +154,16 @@ describe('navigation shell', () => {
     expect(screen.getByTestId('exercise-name')).toHaveTextContent('Arm circles');
   });
 
+  it('refuses to resume a session that is not the current user’s (deep-link guard)', async () => {
+    await seedUser();
+    const other = await getDataRuntime().repos.workouts.startSession({
+      userId: 'someone-else',
+      mode: 'guided',
+    });
+    await renderRouter('./app', { initialUrl: `/workout?resume=${other.id}` });
+    expect(await screen.findByText("We couldn't start this workout.")).toBeTruthy();
+  });
+
   it('shows charts and personal bests once workouts exist', async () => {
     const userId = await seedUser();
     const { workouts } = getDataRuntime().repos;
