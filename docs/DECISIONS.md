@@ -266,3 +266,13 @@ providers means another `Analytics` implementation.
 
 A full-app test walks every main screen and fails if any tappable element lacks an accessible
 name, so regressions are caught in CI rather than in manual passes.
+
+## ADR-038: Portrait app, rotating workout player
+
+Floor exercises are filmed with the phone sideways, so the player unlocks rotation and switches to a
+side-by-side layout in landscape; the rest of the app stays portrait for simpler layouts.
+
+## ADR-039: Remote build numbers, SemVer in package.json
+
+EAS owns iOS build numbers / Android version codes (`appVersionSource: remote`, auto-increment),
+avoiding merge conflicts on version files; `package.json` is the single marketing-version source.
