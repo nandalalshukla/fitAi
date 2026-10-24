@@ -18,6 +18,7 @@ import {
   ThemeProvider as NavigationThemeProvider,
   SplashScreen,
   Stack,
+  usePathname,
 } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
@@ -25,10 +26,14 @@ import { useEffect, useMemo } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { bootstrapObservability, getService } from '@/core';
+import { AppErrorBoundary } from '@/features/shell/AppErrorBoundary';
 import { DataProvider } from '@/features/shell/DataProvider';
+import { OfflineBanner } from '@/features/shell/OfflineBanner';
 import { ThemeProvider, ToastProvider, useTheme } from '@/ui';
 
 void SplashScreen.preventAutoHideAsync();
+bootstrapObservability();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -53,11 +58,14 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <ToastProvider>
-            <DataProvider>
-              <AppNavigator />
-            </DataProvider>
-          </ToastProvider>
+          <AppErrorBoundary>
+            <ToastProvider>
+              <DataProvider>
+                <AppNavigator />
+              </DataProvider>
+              <OfflineBanner />
+            </ToastProvider>
+          </AppErrorBoundary>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
@@ -71,6 +79,12 @@ function AppNavigator() {
   useEffect(() => {
     void SystemUI.setBackgroundColorAsync(colors.background);
   }, [colors.background]);
+
+  // Screen analytics: route patterns only (no query params or ids beyond content slugs).
+  const pathname = usePathname();
+  useEffect(() => {
+    getService('analytics').screen(pathname);
+  }, [pathname]);
 
   const navTheme = useMemo(() => {
     const base = theme.scheme === 'dark' ? DarkTheme : DefaultTheme;

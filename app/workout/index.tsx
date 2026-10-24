@@ -6,6 +6,7 @@ import { useSharedValue, type SharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getExerciseInfo } from '@/content';
+import { track } from '@/core';
 import { ExerciseDemo, hasDemo, type ExerciseId, type LiveFormLevel } from '@/features/exercises';
 import {
   DEFAULT_POSE_MODEL,
@@ -64,7 +65,7 @@ export default function WorkoutScreen() {
   const toast = useToast();
   const coach = useVoiceCoach();
   const prefs = useWorkoutPrefs();
-  const { state, error, level, finishedId, dispatch } = useWorkoutSession(workoutParams);
+  const { state, error, level, planId, finishedId, dispatch } = useWorkoutSession(workoutParams);
   const [cameraOn, setCameraOn] = useState(prefs.useCamera);
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [detected, setDetected] = useState<ExerciseId | null>(null);
@@ -102,10 +103,28 @@ export default function WorkoutScreen() {
       ? HIGH_ACCURACY_POSE_MODEL
       : DEFAULT_POSE_MODEL;
 
-  const onUnavailable = useCallback(() => {
-    setCameraOn(false);
-    toast.show({ message: t('workout.notTracked'), kind: 'info' });
-  }, [t, toast]);
+  const started = useRef(false);
+  const begin = () => {
+    if (!started.current && state) {
+      started.current = true;
+      track('workout_started', {
+        mode: state.free ? 'free' : 'plan',
+        plan: planId,
+        camera: cameraOn,
+        resumed: Boolean(workoutParams.resumeId),
+      });
+    }
+    dispatch({ type: 'begin', now: Date.now() });
+  };
+
+  const onUnavailable = useCallback(
+    (reason: 'permission' | 'model') => {
+      track('camera_unavailable', { reason });
+      setCameraOn(false);
+      toast.show({ message: t('workout.notTracked'), kind: 'info' });
+    },
+    [t, toast],
+  );
 
   const onComplete = useCallback(
     (o: SetOutcome) => {
@@ -167,14 +186,7 @@ export default function WorkoutScreen() {
   const content = (pose: SharedValue<Pose | null> | null) => {
     switch (state.phase) {
       case 'ready':
-        return (
-          <GetReady
-            step={step}
-            info={info}
-            pose={pose}
-            onStart={() => dispatch({ type: 'begin', now: Date.now() })}
-          />
-        );
+        return <GetReady step={step} info={info} pose={pose} onStart={begin} />;
       case 'countdown':
         return (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

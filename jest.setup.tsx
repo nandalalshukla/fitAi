@@ -111,3 +111,11 @@ jest.mock('react-native-fast-tflite', () => ({
     throw new Error('TFLite is not available in Jest');
   }),
 }));
+
+jest.mock('@sentry/react-native', () => ({
+  init: jest.fn(),
+  captureException: jest.fn(),
+  captureMessage: jest.fn(),
+  addBreadcrumb: jest.fn(),
+  wrap: (c: unknown) => c,
+}));

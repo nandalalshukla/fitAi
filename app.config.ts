@@ -12,6 +12,9 @@ const BASE_ID = process.env.APP_BUNDLE_ID ?? 'com.formfit.app';
 const bundleId = IS_DEV ? `${BASE_ID}.dev` : IS_PREVIEW ? `${BASE_ID}.preview` : BASE_ID;
 // Google Sign-In needs the reversed iOS client ID as a URL scheme; only added when configured.
 const GOOGLE_IOS_URL_SCHEME = process.env.GOOGLE_IOS_URL_SCHEME;
+// Sentry source-map upload at build time (auth token is an EAS secret, never bundled).
+const SENTRY_ORG = process.env.SENTRY_ORG;
+const SENTRY_PROJECT = process.env.SENTRY_PROJECT;
 const appName = IS_DEV ? 'FormFit (Dev)' : IS_PREVIEW ? 'FormFit (Preview)' : 'FormFit';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -57,6 +60,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-secure-store',
     'expo-apple-authentication',
     ['expo-notifications', { color: '#C6FF3D' }],
+    ...(SENTRY_ORG && SENTRY_PROJECT
+      ? [
+          ['@sentry/react-native/expo', { organization: SENTRY_ORG, project: SENTRY_PROJECT }] as [
+            string,
+            unknown,
+          ],
+        ]
+      : []),
     ...(GOOGLE_IOS_URL_SCHEME
       ? [
           [

@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 
+import { track } from '@/core';
 import { requestNotificationPermission, useReminderSettings } from '@/features/reminders';
 import { useTranslation } from '@/i18n';
 import { Card, Chip, ListItem, SectionHeader, Switch, Text, useTheme, useToast } from '@/ui';
@@ -21,6 +22,8 @@ export function RemindersSection() {
       return;
     }
     r.update({ [key]: on });
+    const next = { ...r, [key]: on };
+    track('reminders_changed', { daily: next.enabled, streak: next.streakNudge });
   };
 
   return (

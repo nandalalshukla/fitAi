@@ -4,6 +4,7 @@ import * as Sharing from 'expo-sharing';
 import { useState } from 'react';
 import { View } from 'react-native';
 
+import { track } from '@/core';
 import { authService, useAuthStore } from '@/features/auth';
 import { useTranslation } from '@/i18n';
 import { Card, ListItem, Modal, SectionHeader, useTheme, useToast } from '@/ui';
@@ -28,6 +29,7 @@ export function AccountSection() {
     await file.write(JSON.stringify(r.value, null, 2));
     if (await Sharing.isAvailableAsync())
       await Sharing.shareAsync(file.uri, { mimeType: 'application/json' });
+    track('data_exported', {});
     toast.show({ message: t('account.exportDone'), kind: 'success' });
   };
 
@@ -37,7 +39,10 @@ export function AccountSection() {
     setBusy(false);
     setConfirm(null);
     if (!r.ok) return toast.show({ message: r.error.message, kind: 'error' });
-    if (action === 'delete') toast.show({ message: t('account.deleted'), kind: 'success' });
+    if (action === 'delete') {
+      track('account_deleted', {});
+      toast.show({ message: t('account.deleted'), kind: 'success' });
+    }
   };
 
   return (

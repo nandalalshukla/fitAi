@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { View } from 'react-native';
 
 import { getExerciseInfo, type CompiledSession } from '@/content';
+import { track } from '@/core';
 import {
   currentStreak,
   getDataRuntime,
@@ -172,7 +173,10 @@ export default function TodayScreen() {
                 fullWidth
                 loading={advance.isPending}
                 style={{ marginTop: spacing[5] }}
-                onPress={() => advance.mutate({ enrollment: a.enrollment, plan: a.plan })}
+                onPress={() => {
+                  track('rest_day_completed', { plan: a.plan.id });
+                  advance.mutate({ enrollment: a.enrollment, plan: a.plan });
+                }}
               />
             ) : (
               <Button

@@ -1,4 +1,5 @@
 import type { Equipment, Goal, Level } from '@/content';
+import { track } from '@/core';
 import { getDataRuntime, requestSync } from '@/data';
 import { authService, currentUserId } from '@/features/auth';
 import { requestNotificationPermission, useReminderSettings } from '@/features/reminders';
@@ -37,6 +38,12 @@ export async function completeOnboarding(a: OnboardingAnswers, now = new Date())
     const granted = await requestNotificationPermission();
     useReminderSettings.getState().update({ ...a.reminder, enabled: granted });
   }
+  track('onboarding_completed', {
+    goal: a.goal,
+    level: a.level,
+    plan: a.planId,
+    reminders: a.reminder.enabled,
+  });
   requestSync();
   return userId;
 }

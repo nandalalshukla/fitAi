@@ -3,8 +3,8 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 
-import { env, isBackendConfigured } from '@/core';
-import { authService } from '@/features/auth';
+import { env, isBackendConfigured, track } from '@/core';
+import { authService, useAuthStore } from '@/features/auth';
 import { useTranslation } from '@/i18n';
 import { Button, Icon, PressableScale, Screen, Text, TextField, useTheme, useToast } from '@/ui';
 
@@ -28,6 +28,8 @@ export default function SignInScreen() {
   }, []);
 
   const done = () => {
+    const u = useAuthStore.getState().user;
+    if (u) track('account_signed_in', { provider: u.provider, upgraded_guest: upgrade });
     toast.show({ message: t('auth.welcome'), kind: 'success' });
     router.back();
   };

@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
-import { logger } from '@/core';
+import { logger, track } from '@/core';
 import { getExerciseInfo, getPlan, type Level } from '@/content';
 import { getDataRuntime, queryKeys, requestSync, type WorkoutSession } from '@/data';
 import { currentUserId } from '@/features/auth';
@@ -198,6 +198,14 @@ export function useWorkoutSession(params: WorkoutParams) {
       const { repos } = getDataRuntime();
       const done = state.results.some((r) => !r.skipped);
       const finished = await repos.workouts.finishSession(s.id, done ? 'completed' : 'abandoned');
+      const kept = state.results.filter((r) => !r.skipped);
+      track('workout_finished', {
+        status: finished.status === 'completed' ? 'completed' : 'abandoned',
+        sets: kept.length,
+        reps: finished.totalReps,
+        minutes: Math.round((finished.durationS ?? 0) / 60),
+        camera_sets: kept.filter((r) => r.cameraTracked).length,
+      });
       if (done && meta.current.planId && meta.current.planDay !== null) {
         const enrollment = await repos.plans.getActive(finished.userId);
         const plan = getPlan(meta.current.planId);

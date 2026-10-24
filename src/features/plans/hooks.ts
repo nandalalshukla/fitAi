@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getPlan, type Plan, type PlanDay } from '@/content';
+import { track } from '@/core';
 import {
   getDataRuntime,
   queryKeys,
@@ -36,9 +37,12 @@ export function useEnrollPlan() {
   const userId = useUserId();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (planId: string) => {
+    mutationFn: async (planId: string) => {
       if (!userId) throw new Error('No user');
-      return getDataRuntime().repos.plans.enroll(userId, planId);
+      const previous = await getDataRuntime().repos.plans.getActive(userId);
+      const e = await getDataRuntime().repos.plans.enroll(userId, planId);
+      track('plan_enrolled', { plan: planId, switched: previous !== null });
+      return e;
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: queryKeys.enrollment(userId) });

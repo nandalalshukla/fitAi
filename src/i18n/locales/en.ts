@@ -301,8 +301,9 @@ export const en = {
     unitsMetric: 'Metric',
     unitsImperial: 'Imperial',
     privacy: 'Privacy',
-    analytics: 'Share anonymous usage data',
-    analyticsHint: 'Helps us improve FormFit. Never includes video or personal details.',
+    analytics: 'Share anonymous usage & crash data',
+    analyticsHint:
+      'Helps us fix bugs and improve FormFit. Never includes video, your name or email.',
     about: 'About',
     privacyPolicy: 'Privacy policy',
     terms: 'Terms of use',
@@ -557,6 +558,10 @@ export const en = {
     notFoundTitle: 'Nothing here',
     notFoundMessage: "This screen doesn't exist.",
     goHome: 'Go to Today',
+    crashTitle: 'Something went wrong',
+    crashMessage:
+      'Sorry about that. Your workouts are safe on this phone. Try again, or restart the app.',
+    offline: 'Offline · saved on this phone',
   },
 } as const;
 
