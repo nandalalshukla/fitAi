@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <rect width="1024" height="500" fill="#0B0D10"/>
+  <svg x="40" y="40" width="420" height="420" viewBox="0 0 1024 1024"><g transform="translate(512 512) scale(0.9) translate(-512 -512)">
+    <path d="M 332.0 200.2 A 360 360 0 1 1 152.0 512.0" fill="none" stroke="#C6FF3D" stroke-width="64" stroke-linecap="round"/>
+    <circle cx="152.0" cy="512.0" r="46" fill="#FF6B3D"/>
+    <g transform="translate(-56 -4)">
+      <g fill="none" stroke="#FFFFFF" stroke-width="66" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 552 420 L 448 570 L 612 610 L 566 760"/>
+        <path d="M 532 450 L 706 470"/>
+      </g>
+      <circle cx="590" cy="338" r="62" fill="#FFFFFF"/>
+    </g>
+  </g></svg>
+  <text x="500" y="230" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="92" fill="#FFFFFF">FormFit</text>
+  <text x="504" y="300" font-family="Arial, sans-serif" font-size="32" fill="#C6FF3D">AI coach that counts every rep</text>
+  <text x="504" y="352" font-family="Arial, sans-serif" font-size="24" fill="#B8BEC8">Form feedback · voice coaching · on-device</text>
+  <circle cx="980" cy="44" r="10" fill="#FF6B3D"/>
+</svg>
