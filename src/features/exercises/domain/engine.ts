@@ -82,7 +82,9 @@ export interface EngineState {
   lastTempoCue: number;
   reps: number;
   lastQuality: number | null;
-  qualities: number[];
+  /** Running sum / count of rep quality (constant memory over long sessions). */
+  qualitySum: number;
+  qualityCount: number;
 }
 
 export interface EngineSnapshot {
@@ -131,7 +133,8 @@ export function createEngine(
     lastTempoCue: -Infinity,
     reps: 0,
     lastQuality: null,
-    qualities: [],
+    qualitySum: 0,
+    qualityCount: 0,
   };
 }
 
@@ -349,7 +352,8 @@ export function processPose(
       );
       state.reps++;
       state.lastQuality = quality;
-      state.qualities.push(quality);
+      state.qualitySum += quality;
+      state.qualityCount += 1;
       state.repViolations = {};
       events.push({
         type: 'rep',
@@ -396,7 +400,7 @@ export function processPose(
 
 export function engineSnapshot(state: EngineState): EngineSnapshot {
   'worklet';
-  const q = state.qualities;
+  const n = state.qualityCount;
   return {
     reps: state.reps,
     phase: currentPhase(state),
@@ -406,7 +410,7 @@ export function engineSnapshot(state: EngineState): EngineSnapshot {
     view: state.view,
     side: state.side,
     lastQuality: state.lastQuality,
-    averageQuality: q.length > 0 ? Math.round(q.reduce((a, b) => a + b, 0) / q.length) : null,
+    averageQuality: n > 0 ? Math.round(state.qualitySum / n) : null,
     features: state.features,
   };
 }

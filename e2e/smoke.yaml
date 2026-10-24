@@ -1,0 +1,73 @@
+# FormFit smoke flow: first launch → onboarding → Today → workout (manual counting) → summary.
+# Run on a dev or preview build:   npm run test:e2e
+appId: ${APP_ID}
+env:
+  APP_ID: com.formfit.app.dev
+---
+- launchApp:
+    clearState: true
+    permissions:
+      camera: deny
+      notifications: deny
+
+# --- Onboarding ---
+- assertVisible:
+    id: onboarding-welcome
+- tapOn:
+    id: onboarding-start
+- tapOn:
+    id: goal-general
+- tapOn:
+    id: onboarding-next
+- tapOn:
+    id: level-beginner
+- tapOn:
+    id: onboarding-next
+- tapOn:
+    id: onboarding-next # equipment
+- tapOn:
+    id: onboarding-next # days per week
+- tapOn:
+    id: reminder-switch # reminders off
+- tapOn:
+    id: onboarding-next
+- tapOn:
+    id: accept-safety
+- tapOn:
+    id: onboarding-next
+- tapOn:
+    id: onboarding-finish
+
+# --- Today: one tap to start ---
+- assertVisible:
+    id: today-card
+- tapOn:
+    id: start-workout
+
+# --- Workout player (camera denied → manual counting) ---
+- assertVisible:
+    id: get-ready
+- tapOn:
+    id: start-set
+- extendedWaitUntil:
+    visible:
+      id: finish-set
+    timeout: 8000
+- tapOn:
+    id: finish-set
+- extendedWaitUntil:
+    visible:
+      id: finish-set
+    timeout: 8000
+- tapOn:
+    id: pause-workout
+- tapOn:
+    id: pause-modal-confirm
+
+# --- Summary ---
+- assertVisible:
+    id: summary-screen
+- tapOn:
+    id: summary-done
+- assertVisible:
+    id: today-card

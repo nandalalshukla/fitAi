@@ -1,11 +1,7 @@
 import { act, fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
 
-import { kv } from '@/core/storage';
-import { getDataRuntime, initData } from '@/data';
-import { setDataRuntimeForTests } from '@/data/runtime';
-import { authService, useAuthStore } from '@/features/auth';
-import { useWorkoutPrefs } from '@/features/settings/workoutPrefsStore';
-import { queryClient } from '@/features/shell/DataProvider';
+import { getDataRuntime } from '@/data';
+import { resetApp, seedUser } from '@/features/shell/testing/appHarness';
 
 jest.mock('expo-font', () => ({
   ...jest.requireActual('expo-font'),
@@ -31,30 +27,7 @@ jest.mock('@/data/db/expoDatabase', () => ({
 // First render transforms the whole router tree; give it room on cold CI caches.
 jest.setTimeout(60_000);
 
-/** A guest who finished onboarding and started `planId` (day `day`). */
-async function seedUser(planId = 'beginner_foundations', day = 1) {
-  await initData();
-  const r = await authService.continueAsGuest();
-  if (!r.ok) throw r.error;
-  const { profiles, plans } = getDataRuntime().repos;
-  await profiles.save(r.value.id, {
-    goal: 'general',
-    fitnessLevel: 'beginner',
-    onboardingCompletedAt: new Date().toISOString(),
-  });
-  const e = await plans.enroll(r.value.id, planId);
-  if (day > 1) await plans.setDay(e, day);
-  return r.value.id;
-}
-
-beforeEach(() => {
-  kv.clearAll();
-  queryClient.clear();
-  setDataRuntimeForTests(null);
-  useAuthStore.setState({ status: 'initializing', user: null });
-  // No camera in Jest: count manually.
-  useWorkoutPrefs.getState().update({ useCamera: false });
-});
+beforeEach(resetApp);
 
 describe('first launch', () => {
   it('runs onboarding and lands on Today with the recommended plan', async () => {

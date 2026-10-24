@@ -1,0 +1,34 @@
+# Browse flow: plans → plan detail → switch plan; exercise library → animated guide.
+appId: ${APP_ID}
+env:
+  APP_ID: com.formfit.app.dev
+---
+- launchApp
+- runFlow:
+    when:
+      visible:
+        id: onboarding-welcome
+    file: smoke.yaml
+- tapOn: Plans
+- tapOn:
+    id: plan-card-core_posture
+- assertVisible:
+    id: plan-detail-screen
+- tapOn:
+    id: select-plan
+- tapOn:
+    id: switch-plan-modal-confirm
+- assertVisible:
+    id: today-card
+- tapOn: Exercises
+- tapOn:
+    id: exercise-search
+- inputText: bird
+- tapOn:
+    id: exercise-bird_dog
+- assertVisible:
+    id: exercise-detail-screen
+- tapOn:
+    id: step-3
+- tapOn:
+    id: demo-play
