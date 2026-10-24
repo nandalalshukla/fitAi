@@ -63,3 +63,12 @@ A live gallery is available in dev builds: **Settings → Design system (dev)** 
 - 48 dp minimum touch target (`theme.hitTarget`).
 - AA contrast for all token pairs (tested).
 - Live regions for changing numbers (rep counter, countdown, toasts).
+
+## Polish pass (Phase 8)
+
+- Camera player: replaced the full-screen dim with top/bottom gradients (`CameraScrim`) so you can
+  see your whole body while the header and controls stay legible.
+- Set-complete celebration (`SetCompleteBurst`, spring check, fade under Reduce Motion); personal
+  bests pulse on the summary.
+- Offline pill (`OfflineBanner`) and a friendly crash screen (`AppErrorBoundary`).
+- Every screen passes the automated accessibility audit; see `docs/ACCESSIBILITY.md`.

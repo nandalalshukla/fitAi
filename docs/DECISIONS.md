@@ -249,3 +249,20 @@ written cues match. Translating the library later means adding per-locale conten
 Research (Fry et al. 2003) shows forward knee travel in squats/lunges is normal and blocking it
 shifts load to the hips and back. The lunge rule fires only on large travel and now says “Take a
 longer step” instead of “keep your knee behind your toes”.
+
+## ADR-035: Crash reporting and analytics are opt-out, scrubbed and key-gated
+
+Sentry and analytics only initialise when their public keys are configured; one settings switch
+disables both. No PII: Sentry's default PII off, events scrubbed client-side; analytics uses a random
+install id and a closed, typed event list.
+
+## ADR-036: HTTP analytics instead of a vendor SDK
+
+A ~100-line batching client (PostHog-compatible `/batch/`) avoids a native SDK, device
+fingerprinting and autocapture, keeps the payload under our control and is unit-tested. Swapping
+providers means another `Analytics` implementation.
+
+## ADR-037: Automated accessibility audit
+
+A full-app test walks every main screen and fails if any tappable element lacks an accessible
+name, so regressions are caught in CI rather than in manual passes.

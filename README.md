@@ -3,10 +3,9 @@
 AI fitness coach for Android and iOS. Pick a plan, tap **Start today's workout**, and the phone
 camera counts your reps, checks your form in real time and coaches you by voice — 100 % on-device.
 
-> Status: **Phase 7 (Content)** complete — researched content (`docs/CONTENT_RESEARCH.md`):
-> 11 plans with progressions and deloads, 54 exercises with step-by-step guides and original
-> animated demos (step-synced, muscle highlights, cue labels, Reduce-Motion stepping). Device
-> numbers pending (see `docs/POSE_SPIKE.md`).
+> Status: **Phase 8 (Hardening)** complete — scrubbed Sentry + opt-out analytics, error boundary,
+> offline banner, hour-long engine soak test, automated accessibility audit, Maestro E2E flows,
+> security review (`docs/SECURITY.md`) and UI polish. Device numbers pending (see `docs/POSE_SPIKE.md`).
 > See the phase plan in `claude-code-fitness-app-prompt.md` §7.2.
 
 ## Stack
