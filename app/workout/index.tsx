@@ -27,7 +27,9 @@ import {
 } from '@/features/workout-session';
 import { ActiveSet, type SetOutcome } from '@/features/workout-session/components/ActiveSet';
 import { GetReady } from '@/features/workout-session/components/GetReady';
+import { CameraScrim } from '@/features/workout-session/components/CameraScrim';
 import { RestView } from '@/features/workout-session/components/RestView';
+import { SetCompleteBurst } from '@/features/workout-session/components/SetCompleteBurst';
 import { useTicker } from '@/features/workout-session/components/useTicker';
 import { useTranslation } from '@/i18n';
 import {
@@ -294,7 +296,8 @@ export default function WorkoutScreen() {
           onUnavailable={onUnavailable}
         >
           {({ pose }) => (
-            <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.scrim }]}>
+            <View style={StyleSheet.absoluteFill}>
+              <CameraScrim />
               <Body
                 insetsTop={insets.top}
                 insetsBottom={insets.bottom}
@@ -316,6 +319,7 @@ export default function WorkoutScreen() {
           {content(null)}
         </Body>
       )}
+      <SetCompleteBurst count={state.results.filter((r) => !r.skipped).length} />
       <Modal
         testID="pause-modal"
         visible={confirmEnd}

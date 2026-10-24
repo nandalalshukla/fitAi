@@ -14,6 +14,7 @@ import {
   ErrorState,
   Icon,
   ListItem,
+  PulseIcon,
   Screen,
   SectionHeader,
   Skeleton,
@@ -116,7 +117,7 @@ export default function WorkoutSummaryScreen() {
           <Stagger index={4}>
             <Card elevated testID="personal-bests">
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[2] }}>
-                <Icon name="trophy" color="accentText" />
+                <PulseIcon name="trophy" color="accentText" />
                 <Text variant="h3">{t('summary.personalBest')}</Text>
               </View>
               {summary.newBests.map((b) => (
