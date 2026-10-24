@@ -7,6 +7,7 @@ import { Button, Card, ProgressRing, Text, useTheme } from '@/ui';
 
 import type { SessionStep } from '../domain/steps';
 import { formatClock, stepTarget } from '../format';
+import { usePlayerLayout } from './usePlayerLayout';
 
 export interface RestViewProps {
   remainingMs: number;
@@ -25,19 +26,29 @@ export function RestView({
   onExtend,
 }: RestViewProps) {
   const remainingMs = Math.min(rawRemaining, totalMs);
+  const { landscape, ring } = usePlayerLayout();
   const { t } = useTranslation();
   const lt = useLooseT();
   const { spacing } = useTheme();
   const info = next?.exerciseId ? getExerciseInfo(next.exerciseId) : undefined;
   return (
-    <View testID="rest-view" style={{ flex: 1, justifyContent: 'space-between', gap: spacing[4] }}>
+    <View
+      testID="rest-view"
+      style={{
+        flex: 1,
+        flexDirection: landscape ? 'row' : 'column',
+        alignItems: landscape ? 'center' : undefined,
+        justifyContent: 'space-between',
+        gap: spacing[4],
+      }}
+    >
       <View style={{ alignItems: 'center', gap: spacing[3], flex: 1, justifyContent: 'center' }}>
         <Text variant="overline" color="textMuted">
           {t('workout.rest')}
         </Text>
         <ProgressRing
           progress={totalMs > 0 ? remainingMs / totalMs : 0}
-          size={220}
+          size={Math.min(220, ring)}
           strokeWidth={12}
           color="info"
           accessibilityLabel={`${t('workout.rest')} ${formatClock(remainingMs)}`}

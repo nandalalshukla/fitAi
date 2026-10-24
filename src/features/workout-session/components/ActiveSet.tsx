@@ -27,6 +27,7 @@ import {
 import type { SessionStep } from '../domain/steps';
 import { formatClock, stepTarget } from '../format';
 import { FormBanner } from './FormBanner';
+import { usePlayerLayout } from './usePlayerLayout';
 import { useTicker } from './useTicker';
 
 export interface SetOutcome {
@@ -309,8 +310,9 @@ function ManualSet({ step, info, paused, elapsedMs, coach, onComplete }: ActiveS
 
 function RepRing({ reps, target }: { reps: number; target: number | null }) {
   const { t } = useTranslation();
+  const { ring } = usePlayerLayout();
   return (
-    <ProgressRing progress={target ? reps / target : 0} size={260} strokeWidth={14} gradient>
+    <ProgressRing progress={target ? reps / target : 0} size={ring} strokeWidth={14} gradient>
       <AnimatedCounter
         testID="rep-count"
         value={reps}
@@ -336,11 +338,12 @@ function TimerRing({
   label?: string;
   sub?: string;
 }) {
+  const { ring } = usePlayerLayout();
   const remaining = Math.max(0, targetMs - elapsedMs);
   return (
     <ProgressRing
       progress={Math.min(1, elapsedMs / targetMs)}
-      size={260}
+      size={ring}
       strokeWidth={14}
       gradient
       accessibilityLabel={formatClock(remaining)}
@@ -385,47 +388,67 @@ function SetLayout({
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
   };
+  const { landscape } = usePlayerLayout();
+  const counter = (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[4] }}>
+      {onAdjust ? (
+        <PressableScale
+          testID="rep-minus"
+          accessibilityLabel={t('workout.removeRep')}
+          onPress={() => onAdjust(-1)}
+          style={round}
+        >
+          <Icon name="remove" />
+        </PressableScale>
+      ) : null}
+      {center}
+      {onAdjust ? (
+        <PressableScale
+          testID="rep-plus"
+          accessibilityLabel={t('workout.addRep')}
+          onPress={() => onAdjust(1)}
+          style={round}
+        >
+          <Icon name="add" />
+        </PressableScale>
+      ) : null}
+    </View>
+  );
+  const hintText = hint ? (
+    <Text variant="body" color="textMuted" align="center">
+      {hint}
+    </Text>
+  ) : null;
+  const finish = (
+    <Button
+      testID="finish-set"
+      label={t('workout.doneSet')}
+      icon="checkmark"
+      size="lg"
+      fullWidth
+      onPress={onFinish}
+    />
+  );
+  if (landscape) {
+    return (
+      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing[4] }}>
+        <View style={{ flex: 1, gap: spacing[3] }}>
+          {banner}
+          {hintText}
+        </View>
+        {counter}
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>{finish}</View>
+      </View>
+    );
+  }
   return (
     <View style={{ flex: 1, justifyContent: 'space-between', gap: spacing[4] }}>
       <View style={{ minHeight: 64 }}>{banner}</View>
       <View style={{ alignItems: 'center', gap: spacing[4] }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[4] }}>
-          {onAdjust ? (
-            <PressableScale
-              testID="rep-minus"
-              accessibilityLabel={t('workout.removeRep')}
-              onPress={() => onAdjust(-1)}
-              style={round}
-            >
-              <Icon name="remove" />
-            </PressableScale>
-          ) : null}
-          {center}
-          {onAdjust ? (
-            <PressableScale
-              testID="rep-plus"
-              accessibilityLabel={t('workout.addRep')}
-              onPress={() => onAdjust(1)}
-              style={round}
-            >
-              <Icon name="add" />
-            </PressableScale>
-          ) : null}
-        </View>
-        {hint ? (
-          <Text variant="body" color="textMuted" align="center">
-            {hint}
-          </Text>
-        ) : null}
+        {counter}
+        {hintText}
       </View>
-      <Button
-        testID="finish-set"
-        label={t('workout.doneSet')}
-        icon="checkmark"
-        size="lg"
-        fullWidth
-        onPress={onFinish}
-      />
+      {finish}
     </View>
   );
 }

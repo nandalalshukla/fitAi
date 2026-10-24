@@ -12,6 +12,7 @@ import {
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
 import { useFonts } from 'expo-font';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import {
   DarkTheme,
   DefaultTheme,
@@ -34,6 +35,10 @@ import { ThemeProvider, ToastProvider, useTheme } from '@/ui';
 
 void SplashScreen.preventAutoHideAsync();
 bootstrapObservability();
+// Portrait everywhere except the workout player (which unlocks rotation itself).
+void ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch(
+  () => undefined,
+);
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({

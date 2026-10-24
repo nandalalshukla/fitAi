@@ -1,5 +1,6 @@
 import { useKeepAwake } from 'expo-keep-awake';
 import { router, useLocalSearchParams } from 'expo-router';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { AppState, StyleSheet, View } from 'react-native';
 import { useSharedValue, type SharedValue } from 'react-native-reanimated';
@@ -55,6 +56,11 @@ const REST_EXTENSION_S = 15;
  */
 export default function WorkoutScreen() {
   useKeepAwake();
+  // Floor exercises are filmed with the phone sideways: the player may rotate.
+  useEffect(() => {
+    void ScreenOrientation.unlockAsync();
+    return () => void ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+  }, []);
   const params = useLocalSearchParams<{ mode?: string; day?: string; resume?: string }>();
   const [workoutParams] = useState(() => ({
     mode: params.mode === 'free' ? ('free' as const) : ('plan' as const),

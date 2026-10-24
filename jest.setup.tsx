@@ -119,3 +119,9 @@ jest.mock('@sentry/react-native', () => ({
   addBreadcrumb: jest.fn(),
   wrap: (c: unknown) => c,
 }));
+
+jest.mock('expo-screen-orientation', () => ({
+  lockAsync: jest.fn(async () => undefined),
+  unlockAsync: jest.fn(async () => undefined),
+  OrientationLock: { PORTRAIT_UP: 'PORTRAIT_UP', DEFAULT: 'DEFAULT' },
+}));
