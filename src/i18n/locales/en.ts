@@ -332,6 +332,7 @@ export const en = {
       'Stop exercising immediately and seek medical help if you feel chest pain, dizziness, severe shortness of breath or sharp pain.',
     ],
     full: 'The full documents are available on our website.',
+    readFull: 'Read the full document',
   },
   camera: {
     permissionTitle: 'Let FormFit see your moves',

@@ -22,6 +22,9 @@ const schema = z.object({
   EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: z.string().min(1).optional(),
   /** Public support address for "Help & feedback" (hidden when unset). */
   EXPO_PUBLIC_SUPPORT_EMAIL: z.email().optional(),
+  /** Hosted legal documents (required by the app stores); linked from the in-app summaries. */
+  EXPO_PUBLIC_PRIVACY_URL: secureUrl.optional(),
+  EXPO_PUBLIC_TERMS_URL: secureUrl.optional(),
 });
 
 export type PublicEnv = z.infer<typeof schema>;
@@ -49,6 +52,8 @@ export const env: PublicEnv = parseEnv({
   EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
   EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
   EXPO_PUBLIC_SUPPORT_EMAIL: process.env.EXPO_PUBLIC_SUPPORT_EMAIL,
+  EXPO_PUBLIC_PRIVACY_URL: process.env.EXPO_PUBLIC_PRIVACY_URL,
+  EXPO_PUBLIC_TERMS_URL: process.env.EXPO_PUBLIC_TERMS_URL,
 });
 
 export const isBackendConfigured = (e: PublicEnv = env) =>

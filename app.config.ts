@@ -1,5 +1,7 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
+import pkg from './package.json';
+
 /**
  * Dynamic Expo config. Build-time values (bundle IDs, EAS project ID) come from
  * env so they never need to be hard-coded per environment. See `.env.example`.
@@ -22,8 +24,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   name: appName,
   slug: 'formfit',
   scheme: 'formfit',
-  version: '0.1.0',
-  orientation: 'portrait',
+  // Single source of truth for the marketing version; build numbers are managed by EAS
+  // (`appVersionSource: remote`, auto-incremented on production builds).
+  version: pkg.version,
+  // Locked to portrait in code; the workout player unlocks rotation (phone sideways on the floor).
+  orientation: 'default',
   icon: './assets/icon.png',
   userInterfaceStyle: 'automatic',
   backgroundColor: '#0B0D10',
@@ -31,6 +36,45 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: bundleId,
     supportsTablet: true,
     usesAppleSignIn: true,
+    // HTTPS + standard OS crypto only: exempt from US export documentation.
+    config: { usesNonExemptEncryption: false },
+    privacyManifests: {
+      NSPrivacyTracking: false,
+      NSPrivacyTrackingDomains: [],
+      NSPrivacyCollectedDataTypes: [
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeFitness',
+          NSPrivacyCollectedDataTypeLinked: true,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+        },
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeEmailAddress',
+          NSPrivacyCollectedDataTypeLinked: true,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+        },
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeCrashData',
+          NSPrivacyCollectedDataTypeLinked: false,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+        },
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeProductInteraction',
+          NSPrivacyCollectedDataTypeLinked: false,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAnalytics'],
+        },
+      ],
+      NSPrivacyAccessedAPITypes: [
+        {
+          // MMKV / AsyncStorage-style app preferences.
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
+          NSPrivacyAccessedAPITypeReasons: ['CA92.1'],
+        },
+      ],
+    },
     infoPlist: {
       NSCameraUsageDescription:
         'FormFit uses the camera to count your reps and check your form. Video is processed on your device and is never recorded or uploaded.',
@@ -49,7 +93,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     allowBackup: false,
     permissions: ['android.permission.CAMERA'],
     // The camera library must never record audio or ask for the microphone.
-    blockedPermissions: ['android.permission.RECORD_AUDIO'],
+    blockedPermissions: [
+      'android.permission.RECORD_AUDIO',
+      'android.permission.READ_EXTERNAL_STORAGE',
+      'android.permission.WRITE_EXTERNAL_STORAGE',
+      'android.permission.SYSTEM_ALERT_WINDOW',
+    ],
   },
   web: {
     favicon: './assets/favicon.png',
@@ -58,6 +107,24 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-router',
     'expo-font',
     'expo-localization',
+    [
+      'expo-build-properties',
+      {
+        // R8 code shrinking + resource shrinking for smaller, obfuscated release APKs/AABs.
+        android: {
+          enableMinifyInReleaseBuilds: true,
+          enableShrinkResourcesInReleaseBuilds: true,
+          // Nitro modules (camera, TFLite, MMKV, image) are created from C++ via JNI and
+          // ship no consumer rules: keep them from being stripped/renamed by R8.
+          extraProguardRules: [
+            '-keep class com.margelo.nitro.** { *; }',
+            '-keep class com.madebyevan.thumbhash.** { *; }',
+            '-keepclassmembers class * { @com.facebook.proguard.annotations.DoNotStrip *; }',
+          ].join('\n'),
+        },
+      },
+    ],
+    'expo-screen-orientation',
     'expo-sqlite',
     'expo-secure-store',
     'expo-apple-authentication',
